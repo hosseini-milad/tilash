@@ -268,13 +268,17 @@ router.post('/list-faktors', auth, async (req, res) => {
         if (!adminData) {
             return res.status(400).json({ error: 'کاربر معتبر نیست.' });
         }
-        const managerTabs = [
+        const userList = await userModel.find()
+        var managerTabs = [
 			{ title: 'ویزیتور', type: 'Visitor', manager: 'visitor' },
-			{ title: 'فروشگاه زهره', type: 'Sale', manager: 'zohre' },
-			{ title: 'فروشگاه حصارک', type: 'Sale', manager: 'hesarak' },
-			{ title: 'فروشگاه مرکزی', type: 'Visitor', manager: 'markazi' },
-			{ title: 'وب سایت', type: 'Website' },
-		];
+        ]
+        for(var i;i<userList.length;i++){
+            managerTabs.push({
+                title: userList[i].username,
+                type: 'Sale',manager: userList[i].username
+            })
+        }
+        managerTabs.push({ title: 'وب سایت', type: 'Website' })
         const hasManagerAccess = adminData.access === 'manager';
 		const tabs = hasManagerAccess ? managerTabs : [];
         const matchCondition = {};
