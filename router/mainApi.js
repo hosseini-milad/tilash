@@ -213,7 +213,7 @@ router.post('/sepidar-customer', async (req, res) => {
             if (matched) { notUpdateCustomer++ }
             if (modified) { updateCustomer++ }
             if (!matched) {
-                await customers.create({
+                try{await customers.create({
                     username: sepidarResult[i].Title,
                     cName: sepidarResult[i].Name,
                     sName: sepidarResult[i].LastName,
@@ -228,7 +228,7 @@ router.post('/sepidar-customer', async (req, res) => {
                     Address: mainAddress?mainAddress.Address : '',
                     postalCode: mainAddress?mainAddress.ZipCode : '',
                     date: new Date()
-                })
+                })}catch{}
                 newCustomer++
 
             }
