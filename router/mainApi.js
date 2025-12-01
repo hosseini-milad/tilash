@@ -184,7 +184,8 @@ router.post('/sepidar-customer', async (req, res) => {
 
         for (var i = 0; i < sepidarResult.length; i++) {
             if(!sepidarResult[i].PhoneNumber) continue
-            if(!sepidarResult[i].NationalID) continue
+            if(!sepidarResult[i].NationalID) 
+                sepidarResult[i].NationalID = sepidarResult[i].PhoneNumber
             var mainAddress = sepidarResult[i].Addresses&&sepidarResult[i].Addresses.find(item=>
                 item.IsMain == true
             )
