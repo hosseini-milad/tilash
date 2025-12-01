@@ -1,7 +1,15 @@
-**/node_modules
-**/uploads
-**/upload
-**/logs
- **.env
- **/env
-**.envO
+# Dependencies
+node_modules/
+
+# Logs
+logs/
+*.log
+
+# Uploads
+uploads/
+upload/
+
+# Environment files
+.env
+*.env
+.env.*
