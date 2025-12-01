@@ -113,7 +113,7 @@ router.post('/sepidar-product', async (req, res) => {
             })
             return
         }
-        return res.json(sepidarResult)
+        //return res.json(sepidarResult)
         //await products.deleteMany({})
 
         var newProduct = [];
@@ -183,6 +183,7 @@ router.post('/sepidar-customer', async (req, res) => {
         var notUpdateCustomer = 0
 
         for (var i = 0; i < sepidarResult.length; i++) {
+            if(!sepidarResult[i].PhoneNumber) continue
             var mainAddress = sepidarResult[i].Addresses&&sepidarResult[i].Addresses.find(item=>
                 item.IsMain == true
             )
