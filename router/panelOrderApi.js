@@ -41,13 +41,17 @@ router.post('/list', jsonParser, async (req, res) => {
 		if (!adminData) {
 			return res.status(400).json({ error: 'کاربر معتبر نیست.' });
 		}
-        const managerTabs = [
+        const userList = await users.find()
+		var managerTabs = [
 			{ title: 'ویزیتور', type: 'Visitor', manager: 'visitor' },
-			{ title: 'فروشگاه زهره', type: 'Sale', manager: 'zohre' },
-			{ title: 'فروشگاه حصارک', type: 'Sale', manager: 'hesarak' },
-			{ title: 'فروشگاه مرکزی', type: 'Visitor', manager: 'markazi' },
-			{ title: 'وب سایت', type: 'Website' },
-		];
+        ]
+        for(var i=0;i<userList.length;i++){
+            managerTabs.push({
+                title: userList[i].username,
+                type: 'Sale',manager: userList[i].username
+            })
+        }
+        managerTabs.push({ title: 'وب سایت', type: 'Website' })
 		const tabs = adminData.access === 'manager' ? managerTabs : [];
 		// if (adminData.access !== 'manager') { // TODO: This condition should be checked
 		// 	if (adminData.username === 'zohre' || adminData.username === 'hesarak') {
@@ -254,7 +258,7 @@ router.post('/list', jsonParser, async (req, res) => {
 				}
 			}
 			const matchCondition = {
-				isSale: true,
+				//isSale: true,
 			};
 			if (orderNo) {
 				matchCondition.cartNo = new RegExp('.*' + orderNo + '.*');
