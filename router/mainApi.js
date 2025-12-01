@@ -265,9 +265,16 @@ router.post('/sepidar-price', async (req, res) => {
         await productPrice.deleteMany({})
         for (var i = 0; i < sepidarPriceResult.length; i++) {
             //sepidarPriceResult[i].SaleTypeRef===5&& 
+            var saleType = sepidarPriceResult[i].SaleTypeRef
+            if(sepidarPriceResult[i].SaleTypeRef==1){
+                saleType =3
+            }
+            if(sepidarPriceResult[i].SaleTypeRef==7){
+                saleType =4
+            }
             await productPrice.create({
                 pID: sepidarPriceResult[i].Code,
-                saleType: sepidarPriceResult[i].SaleTypeRef,
+                saleType: saleType,
                 price: sepidarPriceResult[i].Fee ? (parseInt(sepidarPriceResult[i].Fee)) : 0,
                 ItemID: sepidarPriceResult[i].ItemRef,
                 date: new Date()
