@@ -35,6 +35,7 @@ router.post('/list', jsonParser, async (req, res) => {
         const fromDate = utils.helper.getFromDate(dateFrom);
         const toDate = utils.helper.getToDate(dateTo);
         const skip = parseInt(offset);
+		const type = req.body.type?req.body.type:"Sale"
         const limit = parseInt(pageSize);
 
 		const adminData = await users.findOne({ _id: userId }).select({ password: 0 }).lean();
