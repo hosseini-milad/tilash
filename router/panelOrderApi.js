@@ -31,11 +31,11 @@ router.post('/sku/find', jsonParser, async (req, res) => {
 router.post('/list', jsonParser, async (req, res) => {
 	try {
         const userId = req.headers['userid'];
-        const { dateFrom = [], dateTo = [], offset = 0, pageSize = 10, orderNo, status, customer, manager, brand, type } = req.body;
+        const { dateFrom = [], dateTo = [], offset = 0, pageSize = 10, orderNo, 
+			status, customer, manager, brand, type="Sale" } = req.body;
         const fromDate = utils.helper.getFromDate(dateFrom);
         const toDate = utils.helper.getToDate(dateTo);
         const skip = parseInt(offset);
-		const type = req.body.type?req.body.type:"Sale"
         const limit = parseInt(pageSize);
 
 		const adminData = await users.findOne({ _id: userId }).select({ password: 0 }).lean();
