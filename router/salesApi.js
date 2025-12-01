@@ -64,7 +64,7 @@ router.post('/find-products', auth, async (req, res) => {
 			},
         ];
 		const searchProducts = await productSchema.aggregate(productsAggregation);
-        return res.json(searchProducts)
+        //return res.json(searchProducts)
         const searchedProducts = searchProducts.map((i) => i.sku);
         // const tasksMatchCondition = {
         //     taskStep: {
@@ -85,7 +85,7 @@ router.post('/find-products', auth, async (req, res) => {
                 'cartItems.sku': { $in: searchedProducts },
                 isQuote: false,
                 isSale,
-                //stockId,
+                stockId,
                 $or: [{ InvoiceID: { $exists: false } }, { taskStep: 'cancel' }],
             };
             currentCart = await cartModel.find(cartsCondition).lean();
