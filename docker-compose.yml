@@ -1,0 +1,41 @@
+version: '3.4'
+
+networks:
+  default:
+    name: web_net
+
+services:
+
+  apanel_sharif_back:
+    image: apanel_sharif_back:latest
+    mem_limit: 512M
+    mem_reservation: 128M
+    cpus: 0.5
+
+    container_name: apanel_sharif_back
+    restart: on-failure
+    networks:
+      - default
+
+
+    volumes:
+      - "/home/mainDemo/back/upload/category:/app/upload"
+
+    labels:
+
+      - "traefik.enable=true"
+      - "traefik.docker.network=web_net"
+      - "traefik.http.routers.sharifback.entrypoints=web"
+      - "traefik.http.routers.sharifback.rule=Host(`testadmin.sharifoilco.com`)"
+      - "traefik.http.routers.sharifback.service=sharifback-secure"
+      - "traefik.http.routers.sharifback.middlewares=https-redirect"
+      - "traefik.http.routers.sharifback-secure.entrypoints=websecure"
+      - "traefik.http.routers.sharifback-secure.rule=Host(`testadmin.sharifoilco.com`)"
+      - "traefik.http.routers.sharifback-secure.tls=true"
+      - "traefik.http.routers.sharifback-secure.tls.options=default"
+      - "traefik.http.routers.sharifback-secure.tls.certresolver=mycert"
+      - "traefik.http.routers.sharifback-secure.service=sharifback-secure"
+      - "traefik.http.services.sharifback-secure.loadbalancer.server.port=4098"
+        #      - "traefik.http.services.sharifback-secure.loadbalancer.server.scheme=https"
+        #      - "traefik.http.services.sharifback-secure.loadbalancer.serverstransport=dkmehrtransport@file"
+
