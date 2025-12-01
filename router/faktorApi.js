@@ -1573,6 +1573,10 @@ const checkForSalePolicyDependentProducts = async (itemId, sku, manageId, cart) 
 };
 
 const checkForSalePolicyDependentProductsByAction = async (manageId, cart) => {
+    return {
+        needDependency: false,
+        dependencyCheckResult:[],
+    };
     try {
         const dependencyCheckResult = [];
         for (let i = 0; i < cart?.quickCart?.cartItems?.length; i++) {
