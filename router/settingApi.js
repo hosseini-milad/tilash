@@ -272,7 +272,7 @@ router.post('/list-faktors', auth, async (req, res) => {
         var managerTabs = [
 			{ title: 'ویزیتور', type: 'Visitor', manager: 'visitor' },
         ]
-        for(var i;i<userList.length;i++){
+        for(var i=0;i<userList.length;i++){
             managerTabs.push({
                 title: userList[i].username,
                 type: 'Sale',manager: userList[i].username
