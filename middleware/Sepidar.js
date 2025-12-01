@@ -12,6 +12,7 @@ const sepidarFetch = async (data, action, user) => {
         header = SEPIDAR_HEADER_HESARAK
     var response = '';
     try {
+        return header
         response = await fetch(SEPIDAR_URL + action,
             { method: 'GET', headers: JSON.parse(header) });
         //console.log(response)
