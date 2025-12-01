@@ -30,9 +30,6 @@ router.post('/find-products', auth, async (req, res) => {
             active: true,
             sku: { $exists: true },
         };
-        if (filter) {
-            productsMatchCondition.sku = { $in: [/fs/i, /cr/i, /pr/i] };
-        }
         if (search) {
             productsMatchCondition['$or'] = [
                 { sku: { $regex: search, $options: 'i' } },
@@ -79,7 +76,7 @@ router.post('/find-products', auth, async (req, res) => {
 		// const currentCart = await cart.find({ 'cartItems.sku': { $in: searchedProducts }, cartNo: { $in: cartIds } }).lean();
 		// const qCartList = await qCart.find({ 'cartItems.sku': { $in: searchedProducts }, stockId }).lean();
         const userProfiles = await profileModel.find({ _id: { $in: userData.profile } }).lean();
-        const isSale = userProfiles.find((item) => item.profileCode === 'sale') ? true : false;
+        const isSale = true//userProfiles.find((item) => item.profileCode === 'sale') ? true : false;
         let currentCart;
         let qCartList;
         if (isSale) {
@@ -87,7 +84,7 @@ router.post('/find-products', auth, async (req, res) => {
                 'cartItems.sku': { $in: searchedProducts },
                 isQuote: false,
                 isSale,
-                stockId,
+                //stockId,
                 $or: [{ InvoiceID: { $exists: false } }, { taskStep: 'cancel' }],
             };
             currentCart = await cartModel.find(cartsCondition).lean();
