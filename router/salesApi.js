@@ -64,6 +64,7 @@ router.post('/find-products', auth, async (req, res) => {
 			},
         ];
 		const searchProducts = await productSchema.aggregate(productsAggregation);
+        return res.json(searchProducts)
         const searchedProducts = searchProducts.map((i) => i.sku);
         // const tasksMatchCondition = {
         //     taskStep: {
