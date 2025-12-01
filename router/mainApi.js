@@ -113,7 +113,7 @@ router.post('/sepidar-product', async (req, res) => {
             })
             return
         }
-        return res.json(sepidarResult)
+        //return res.json(sepidarResult)
         //await products.deleteMany({})
 
         var newProduct = [];
