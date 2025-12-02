@@ -2295,7 +2295,7 @@ router.post('/quick-to-cart', jsonParser, async (req, res) => {
 		};
         let status = '';
 		const isSale = await CheckSale(data.manageId); // 1 or 0
-		data.isSale = isSale;
+		data.isSale = true//isSale;
 		//const cartAll = await cart.find()
 		const userData = await customers.findOne({ _id: userId }).lean();
 		const adminData = await users.findOne({ _id: data.manageId }).lean();
