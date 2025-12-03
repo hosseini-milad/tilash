@@ -120,8 +120,11 @@ router.post('/find-products', auth, async (req, res) => {
 			let count = searchProducts[i].countData.find((item) => item.Stock == stockId);
 			let desc = '';
 			let cartCount = findCartCount(searchProducts[i].sku, currentCart.concat(qCartList), stockId);
+            searchProducts[i].isZero = false
 			if (!count) {
-                continue;
+                count = {}
+                searchProducts[i].isZero = true
+                //continue;
             }
             count.quantity = parseInt(count.quantity) - parseInt(cartCount);
 			if (1||count.quantity > 0) {
