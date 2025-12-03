@@ -2282,12 +2282,14 @@ const checkForSalePolicyRules = async (qCartData, manageId) => {
 router.post('/quick-to-cart', jsonParser, async (req, res) => {
 	try {
 		const userId = req.body.userId ? req.body.userId : req.headers['userid'];
-		const { branchName, branchId, date, cartID, isQuote } = req.body;
+		const { branchName, branchId, date,  transport ,
+                transportPrice,bank,cartID, isQuote } = req.body;
 
 		const data = {
 			userId: userId,
 			manageId: req.headers['userid'],
 			date,
+            transport,transportPrice,bank,
 			progressDate: Date.now(),
 			branchName,
 			branchId,
@@ -2328,7 +2330,8 @@ router.post('/quick-to-cart', jsonParser, async (req, res) => {
 		const availItems = !data.isQuote ? await checkCart(quickCartItems, stockId, data.payValue) : 0;
 		if (availItems) {
 			return res.status(400).json({ error: availItems });
-		}
+		} 
+        
 		data.cartNo = await NewCode(isSale ? 's' : 'd');
 		data.profileId = adminData && adminData.profile;
 		data.profileName = profileData && profileData.map((item) => item.profileName);
