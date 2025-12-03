@@ -1391,8 +1391,8 @@ router.post('/cart-find', jsonParser, async (req, res) => {
 
 
             }
-        var orderData = findQuickCartSum(cartItems, cartData.payValue,
-            cartData.discount)
+        var orderData = findCartSum(cartItems, cartData.payValue,
+            cartData.transportPrice)
 
 		if (canEdit) {
 			// add productscount
