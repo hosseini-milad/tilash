@@ -344,6 +344,11 @@ router.post('/list-faktors', auth, async (req, res) => {
 	}
 });
 
+router.get('/list-bank', async (req,res)=>{
+    const bankList = await bankAccounts.find({ })
+    res.json({data:bankList})
+})
+
 router.post('/add-bank-to-cart',auth, async (req,res)=>{
     
     const data = {
