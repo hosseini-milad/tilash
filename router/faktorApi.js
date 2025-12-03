@@ -1054,7 +1054,8 @@ const findCartData = async (cartNo) => {
         const cartData = await cart.findOne({ cartNo: cartNo })
         var cartDetail = ''
 
-        cartDetail = findQuickCartSum(cartData.cartItems, cartData.payValue, cartData.discount)
+        cartDetail = findQuickCartSum(cartData.cartItems, 
+            cartData.payValue, cartData.discount,cartData.transportPrice)
         //if(qCartData) qCartDetail =findQuickCartSum(qCartData.cartItems,qCartData.payValue)
         for (var j = 0; j < cartData.cartItems.length; j++) {
             try {
@@ -1075,12 +1076,13 @@ const findCartData = async (cartNo) => {
         return ({ cart: [], cartDetail: [] })
     }
 }
-const findQuickCartSum = (cartItems, payValue, discount) => {
+const findQuickCartSum = (cartItems, payValue, discount,transportPrice) => {
     if (!cartItems) return ({ totalPrice: 0, totalCount: 0 })
     var cartSum = 0;
     var cartCount = 0;
     var cartDescription = ''
     var cartDiscount = 0;
+    var tPrice = transportPrice?Number(transportPrice):0
     for (var i = 0; i < cartItems.length; i++) {
         try {//console.log(payValue)
             var cartItemPrice = ''
@@ -1126,9 +1128,10 @@ const findQuickCartSum = (cartItems, payValue, discount) => {
     return ({
         totalFee: cartSum,
         totalCount: cartCount,
+        transportPrice:tPrice,
         totalDiscount: cartDiscount,
         totalTax: (totalPriceNoTax * TaxRate),
-        totalPrice: (totalPriceNoTax * (1 + TaxRate)),
+        totalPrice: (totalPriceNoTax * (1 + TaxRate))+tPrice,
         cartDescription: cartDescription
     })
 }
@@ -3209,7 +3212,8 @@ router.post('/public-cart-find', async (req, res) => {
             }
         }
 
-        var orderData = findQuickCartSum(cartItems, cartData.payValue, cartData.discount);
+        var orderData = findQuickCartSum(cartItems, cartData.payValue, 
+            cartData.discount,cartData.transportPrice);
 
         res.json({ cart: cartList, orderData: orderData, canEdit, taskData });
     } catch (error) {
