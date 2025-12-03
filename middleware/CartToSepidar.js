@@ -3,7 +3,7 @@ const MultiplySum = require("./MultiplySum")
 
 const {TaxRate} = process.env
 const CartToSepidar=async(data,faktorNo,user,stock,cartOff,
-  orderNo,payValue,fullPrice)=>{
+  orderNo,payValue,fullPrice,transportPrice)=>{
     var payValueFinal = (payValue&&payValue=="3")?"1":payValue
         const notNullCartItem = []
         const totalOff= cartOff?parseInt(cartOff):0
@@ -12,6 +12,7 @@ const CartToSepidar=async(data,faktorNo,user,stock,cartOff,
             notNullCartItem.push(data[i]):''
         var totalNetPrice = 0
         var totalNetCount = 0
+        const addition = normalPriceCount(transportPrice,1,1)
 
         var itemsToSepidar=[]
         for(var i=0;i<notNullCartItem.length;i++){
@@ -20,7 +21,6 @@ const CartToSepidar=async(data,faktorNo,user,stock,cartOff,
           
           //console.log("sku: ",item.sku," discount: ",itemDiscount," fee: ",fee)
           const Price = normalPriceCount(fee,item.count,1)
-          
           const itemDiscount = MultiplySum(item.discount,totalOff,1)
           const Discount =itemDiscount?(normalPriceCount(Price,itemDiscount)/100):0
           totalNetCount += parseInt(item.count)
@@ -42,7 +42,7 @@ const CartToSepidar=async(data,faktorNo,user,stock,cartOff,
             "Tax": normalPriceCount(Tax),
             "NetPrice":normalPriceCount(NetPrice),
             "Duty": 0.0000,
-            "Addition": 0.0000
+            "Addition": normalPriceCount(addition)
           })
         }
 

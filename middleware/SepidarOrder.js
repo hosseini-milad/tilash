@@ -15,7 +15,7 @@ const SepidarOrder=async(orderNo,fullPrice)=>{
     var adminData = cartData.manageId&&await users.findOne({_id:ObjectID(cartData.manageId)})
     var sepidarQuery = await CartToSepidar(cartData.cartItems,faktorNo,
         userData.CustomerID?userData:adminData,adminData.StockId,cartData.discount,'',
-        cartData.payValue,fullPrice)
+        cartData.payValue,fullPrice,cartData.transportPrice)
         sepidarQuery.profile = cartData.profileId
         //return(sepidarQuery)
     var sepidarResult = userData.CustomerID?
