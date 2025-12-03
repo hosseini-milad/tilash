@@ -106,7 +106,7 @@ router.post('/find-products', auth, async (req, res) => {
 		let index = 0;
 		for (let i = 0; i < searchProducts.length; i++) {
             let countArr = []
-            for(var j=0;j<stockArr&&stockArr.length;j++){
+            for(var j=0;j<(stockArr&&stockArr.length);j++){
                 var tempCount = searchProducts[i].countData.find((item) => item.Stock == stockArr[j].StockID)
                 countArr.push(tempCount)
             }
