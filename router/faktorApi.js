@@ -691,7 +691,7 @@ const findCartFunction2 = async (userId, managerId,pageSize,offset,search) => {
             else
                 todayCartData.push({...cartData[c], userData: userData})
                 cartData[c] = { ...cartData[c] ,official}
-                cartDetail.push(findCartSum(cartData[c].cartItems,cartData[c].payValue))
+                cartDetail.push(findCartSum(cartData[c].cartItems,cartData[c].payValue,cartData[c].transportPrice))
             }
             catch { }
         }
@@ -872,7 +872,8 @@ const findCartFunction = async (userIdRaw, manageId, pageSize = 10, offset = 0, 
                 }
 				cartData[c] = { ...cartData[c], official ,userData};
                 todayCartData.push({ ...cartData[c], userData });
-				cartDetail.push(findCartSum(cartData[c].cartItems, cartData[c].payValue));
+				cartDetail.push(findCartSum(cartData[c].cartItems, 
+                    cartData[c].payValue,cartData[c].transportPrice));
 			} catch {}
 		}
 		if (qCartData) {
@@ -1076,13 +1077,12 @@ const findCartData = async (cartNo) => {
         return ({ cart: [], cartDetail: [] })
     }
 }
-const findQuickCartSum = (cartItems, payValue, discount,transportPrice) => {
+const findQuickCartSum = (cartItems, payValue, discount) => {
     if (!cartItems) return ({ totalPrice: 0, totalCount: 0 })
     var cartSum = 0;
     var cartCount = 0;
     var cartDescription = ''
     var cartDiscount = 0;
-    var tPrice = transportPrice?Number(transportPrice):0
     for (var i = 0; i < cartItems.length; i++) {
         try {//console.log(payValue)
             var cartItemPrice = ''
@@ -1128,19 +1128,19 @@ const findQuickCartSum = (cartItems, payValue, discount,transportPrice) => {
     return ({
         totalFee: cartSum,
         totalCount: cartCount,
-        transportPrice:tPrice,
         totalDiscount: cartDiscount,
         totalTax: (totalPriceNoTax * TaxRate),
-        totalPrice: (totalPriceNoTax * (1 + TaxRate))+tPrice,
+        totalPrice: (totalPriceNoTax * (1 + TaxRate)),
         cartDescription: cartDescription
     })
 }
-const findCartSum = (cartItems, payValue) => {
+const findCartSum = (cartItems, payValue,transportPrice) => {
     if (!cartItems) return ({ totalPrice: 0, totalCount: 0 })
     var cartSum = 0;
     var cartCount = 0;
     var cartDiscount = 0;
     var cartDescription = ''
+    var tPrice = transportPrice?Number(transportPrice):0
     for (var i = 0; i < cartItems.length; i++) {
         //console.log(payValue)
         var cartItemPrice = findPayValuePrice(cartItems[i].price, payValue)
@@ -1166,9 +1166,10 @@ const findCartSum = (cartItems, payValue) => {
     return ({
         totalFee: cartSum,
         totalCount: cartCount,
+        transportPrice:tPrice,
         totalDiscount: cartDiscount,
         totalTax: (cartSum * TaxRate),
-        totalPrice: (cartSum * (1 + TaxRate) - cartDiscount),
+        totalPrice: (cartSum * (1 + TaxRate) - cartDiscount)+tPrice,
         cartDescription: cartDescription
     })
 }
@@ -3080,7 +3081,7 @@ router.post('/edit-updateFaktor', jsonParser, async (req, res) => {
             }
             else {
                 //console.log(addFaktorResult[i].Number)
-                const cartDetail = findCartSum(faktorDetail[i].cartItems)
+                const cartDetail = findCartSum(faktorDetail[i].cartItems,cartData[c].transportPrice)
                 await FaktorSchema.create(
                     {
                         ...data, faktorItems: faktorDetail[i].cartItems,
