@@ -24,6 +24,8 @@ router.post('/find-products', auth, async (req, res) => {
 		const userData = await userModel.findOne({ _id: req.headers['userid'] }).lean();
 		// const stockId = userData.StockId ? userData.StockId : '13'; // TODO: remove this line
 		const stockId = userData.StockId;
+        const stockArr = userData.stockArr&&userData.stockArr.map(
+            (item)=>(item.StockID));
 		const filter = userData.group === 'bazaryab' ? 'fs' : '';
 
         const productsMatchCondition = {
@@ -104,6 +106,11 @@ router.post('/find-products', auth, async (req, res) => {
 		let searchProductResult = [];
 		let index = 0;
 		for (let i = 0; i < searchProducts.length; i++) {
+            let countArr = []
+            for(var j=0;j<stockArr.length;j++){
+                var tempCount = searchProducts[i].countData.find((item) => item.Stock == stockArr[j])
+                countArr.push(tempCount)
+            }
 			let count = searchProducts[i].countData.find((item) => item.Stock == stockId);
 			let desc = '';
 			let cartCount = findCartCount(searchProducts[i].sku, currentCart.concat(qCartList), stockId);
@@ -111,13 +118,14 @@ router.post('/find-products', auth, async (req, res) => {
                 continue;
             }
             count.quantity = parseInt(count.quantity) - parseInt(cartCount);
-			if (count.quantity > 0) {
+			if (1||count.quantity > 0) {
 				index++;
 				desc = searchProducts[i].title + '(' + searchProducts[i].sku + ')' + '___' + count.quantity;
 
 				searchProductResult.push({
 					...searchProducts[i],
 					count,
+                    countArr,
 					description: desc,
 				});
 				if (index === 15) {
