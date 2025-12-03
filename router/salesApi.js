@@ -113,7 +113,8 @@ router.post('/find-products', auth, async (req, res) => {
                 countArr.push({
                     count:tempCount.quantity,
                     title:stockArr[j].Title,
-                    id:stockArr[j].StockID
+                    id:stockArr[j].StockID,
+                    isMain:(stockId == stockArr[j].StockID)?true:false
                 })
             }
 			let count = searchProducts[i].countData.find((item) => item.Stock == stockId);
