@@ -11,6 +11,7 @@ const taskModel = require('../models/crm/tasks');
 const profileModel = require('../models/auth/ProfileAccess');
 const cartModel = require('../models/product/cart');
 const quickCartModel = require('../models/product/quickCart');
+const stockModel = require('../models/product/Stocks');
 
 router.post('/find-products', auth, async (req, res) => {
 	try {
@@ -107,8 +108,13 @@ router.post('/find-products', auth, async (req, res) => {
 		for (let i = 0; i < searchProducts.length; i++) {
             let countArr = []
             for(var j=0;j<(stockArr&&stockArr.length);j++){
+                //const stockInfo = await stockModel.findOne({StockID:stockArr[j].StockID})
                 var tempCount = searchProducts[i].countData.find((item) => item.Stock == stockArr[j].StockID)
-                countArr.push(tempCount)
+                countArr.push({
+                    count:tempCount.quantity,
+                    title:stockArr[j].Title,
+                    id:stockArr[j].StockID
+                })
             }
 			let count = searchProducts[i].countData.find((item) => item.Stock == stockId);
 			let desc = '';
@@ -123,7 +129,7 @@ router.post('/find-products', auth, async (req, res) => {
 
 				searchProductResult.push({
 					...searchProducts[i],
-					count,stockArr,
+					count,
                     countArr,
 					description: desc,
 				});
