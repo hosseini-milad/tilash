@@ -116,6 +116,9 @@ router.post('/list-products', jsonParser, async (req, res) => {
                 { sku: { $regex: search, $options: 'i' } }
             ];
         }
+        const productCount = await productSchema.countDocuments([
+			{ $match: productsMatchCondition },
+            ])
 		const products = await productSchema.aggregate([
 			{ $match: productsMatchCondition },
 			{
@@ -149,7 +152,7 @@ router.post('/list-products', jsonParser, async (req, res) => {
 			// if (count || count3) showProduct.push(products[i]);
 			if (count) showProduct.push(products[i]);
 		}*/
-		return res.json({ products: showProduct });
+		return res.json({ products: showProduct ,count:productCount});
 	} catch (error) {
 		return res.status(500).json({ message: error.message });
 	}
