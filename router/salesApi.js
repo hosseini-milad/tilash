@@ -15,7 +15,7 @@ const stockModel = require('../models/product/Stocks');
 
 router.post('/find-products', auth, async (req, res) => {
 	try {
-        const { search, filters = {} } = req.body;
+        const { search, offset=0,pageSize=10,filters = {} } = req.body;
         const { brand, subCat, category } = filters;
 		if (!brand && !category) {
 			if (!search) {
@@ -27,6 +27,8 @@ router.post('/find-products', auth, async (req, res) => {
 		const stockId = userData.StockId;
         const stockArr = userData.StockArr
 		const filter = userData.group === 'bazaryab' ? 'fs' : '';
+        const skip = offset?Number(offset):0;
+        const limit = pageSize?Number(pageSize):10;
 
         const productsMatchCondition = {
             active: true,
@@ -64,6 +66,8 @@ router.post('/find-products', auth, async (req, res) => {
 					as: 'countData',
 				},
 			},
+            { $skip: skip },
+            { $limit: limit },
         ];
 		const searchProducts = await productSchema.aggregate(productsAggregation);
         //return res.json(searchProducts)
@@ -124,7 +128,7 @@ router.post('/find-products', auth, async (req, res) => {
 			if (!count) {
                 count = {}
                 searchProducts[i].isZero = true
-                //continue;
+                //continue; 
             }
             count.quantity = parseInt(count.quantity) - parseInt(cartCount);
 			if (1||count.quantity > 0) {
