@@ -152,7 +152,7 @@ router.post('/list-products', jsonParser, async (req, res) => {
 			// if (count || count3) showProduct.push(products[i]);
 			if (count) showProduct.push(products[i]);
 		}*/
-		return res.json({ products: showProduct ,count:productCount});
+		return res.json({ products: showProduct ,size:productCount});
 	} catch (error) {
 		return res.status(500).json({ message: error.message });
 	}
