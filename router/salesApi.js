@@ -69,6 +69,7 @@ router.post('/find-products', auth, async (req, res) => {
             { $skip: skip },
             { $limit: limit },
         ];
+		const productCount = await productSchema.countDocuments(productsMatchCondition);
 		const searchProducts = await productSchema.aggregate(productsAggregation);
         //return res.json(searchProducts)
         const searchedProducts = searchProducts.map((i) => i.sku);
