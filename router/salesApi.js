@@ -111,7 +111,7 @@ router.post('/find-products', auth, async (req, res) => {
                 //const stockInfo = await stockModel.findOne({StockID:stockArr[j].StockID})
                 var tempCount = searchProducts[i].countData.find((item) => item.Stock == stockArr[j].StockID)
                 countArr.push({
-                    count:tempCount.quantity,
+                    count:tempCount&&tempCount.quantity,
                     title:stockArr[j].Title,
                     id:stockArr[j].StockID,
                     isMain:(stockId == stockArr[j].StockID)?true:false
