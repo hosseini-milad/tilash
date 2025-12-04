@@ -137,7 +137,7 @@ router.post('/find-products', auth, async (req, res) => {
                     countArr,
 					description: desc,
 				});
-				if (index === 15) {
+				if (index === 50) {
                     break;
                 }
 			}
