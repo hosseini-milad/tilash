@@ -70,6 +70,11 @@ router.post('/list-products', jsonParser, async (req, res) => {
 		const subId = filter ? filter.subCat : '';
 		const search = filter ? filter.search : '';
 		const stockId = req.body.stockId;
+        const offset = filter ? filter.offset:0; 
+        const pageSize = filter ? filter.pageSize :10;
+        const skip = parseInt(offset);
+        const limit = parseInt(pageSize);
+
 
 		const categoryData = await category.findOne({ catCode: catId }).lean();
 		const catDataID = categoryData && categoryData._id;
@@ -129,7 +134,8 @@ router.post('/list-products', jsonParser, async (req, res) => {
 					as: 'countData',
 				},
 			},
-        {$limit:6}
+            { $skip: skip },
+            { $limit: limit },
 		]);
 
 		let showProduct = products//[];
