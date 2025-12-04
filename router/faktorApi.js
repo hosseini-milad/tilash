@@ -68,6 +68,7 @@ router.post('/list-products', jsonParser, async (req, res) => {
 		const catId = filter ? filter.category : '';
 		//const subId = filter ? filter.subCategory : ''
 		const subId = filter ? filter.subCat : '';
+		const search = filter ? filter.search : '';
 		const stockId = req.body.stockId;
 
 		const categoryData = await category.findOne({ catCode: catId }).lean();
@@ -103,6 +104,12 @@ router.post('/list-products', jsonParser, async (req, res) => {
         };
         if (brandId) {
             productsMatchCondition.brandId = brandId;
+        }
+        if (search) {
+            productsMatchCondition['$or'] = [
+                { title: { $regex: search, $options: 'i' } },
+                { sku: { $regex: search, $options: 'i' } }
+            ];
         }
 		const products = await productSchema.aggregate([
 			{ $match: productsMatchCondition },
