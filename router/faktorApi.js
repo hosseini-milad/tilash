@@ -72,8 +72,8 @@ router.post('/list-products', jsonParser, async (req, res) => {
 		const stockId = req.body.stockId;
         const offset = filter ? filter.offset:0; 
         const pageSize = filter ? filter.pageSize :10;
-        const skip = parseInt(offset);
-        const limit = parseInt(pageSize);
+        const skip = offset?Number(offset):0;
+        const limit = pageSize?Number(pageSize):10;
 
 
 		const categoryData = await category.findOne({ catCode: catId }).lean();
