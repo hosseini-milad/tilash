@@ -339,7 +339,7 @@ router.post('/list-faktors', auth, async (req, res) => {
         const [aggregationResult] = await faktor.aggregate(aggregation);
 		const size = aggregationResult?.totalSize[0]?.totalSize || 0;
 		const filter = aggregationResult?.result || [];
-		const bankList = await bankAccounts.find({ limit: { $ne: adminData.username } }).lean();
+		const bankList = await bankAccounts.find({ limit: adminData.username }).lean();
 		return res.json({ filter, tabs, size, bankList });
 	} catch (error) {
 		return res.status(500).json({ message: error.message });
