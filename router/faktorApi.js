@@ -122,10 +122,11 @@ router.post('/list-products', jsonParser, async (req, res) => {
 					as: 'countData',
 				},
 			},
+        {$limit:6}
 		]);
 
-		let showProduct = [];
-		for (let i = 0; i < products.length; i++) {
+		let showProduct = products//[];
+		/*for (let i = 0; i < products.length; i++) {
 			let count = products[i].countData && products[i].countData.find((item) => item.Stock == stockId);
 			// let count3 = products[i].countData && products[i].countData.find((item) => item.Stock == '9');
 
@@ -134,7 +135,7 @@ router.post('/list-products', jsonParser, async (req, res) => {
 			// if (count3) count3 = count3.quantity;
 			// if (count || count3) showProduct.push(products[i]);
 			if (count) showProduct.push(products[i]);
-		}
+		}*/
 		return res.json({ products: showProduct });
 	} catch (error) {
 		return res.status(500).json({ message: error.message });
