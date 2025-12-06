@@ -347,7 +347,14 @@ router.post('/list-faktors', auth, async (req, res) => {
 });
 
 router.get('/list-bank', async (req,res)=>{
-    const bankList = await bankAccounts.find({ })
+    const bankList = await bankAccounts.find({ }).lean()
+
+    res.json({data:bankList})
+})
+
+router.get('/my-list-bank',auth, async (req,res)=>{
+    const bankList = await bankAccounts.find({ }).lean()
+    
     res.json({data:bankList})
 })
 

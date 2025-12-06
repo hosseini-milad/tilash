@@ -1905,6 +1905,8 @@ router.post('/update-Item', jsonParser, async (req, res) => {
 		changes: req.body.changes,
 		progressDate: Date.now(),
 	};
+    const manageId = req.user.user_id
+    const manageDetail = await users.findOne({_id:new ObjectId(manageId)})
 	try {
 		var status = '';
 		//const cartData = await cart.find({userId:data.userId})
@@ -1917,7 +1919,7 @@ router.post('/update-Item', jsonParser, async (req, res) => {
 				if (data.changes.count) oldCartItems[i].count = data.changes.count;
 				if (data.changes.discount) oldCartItems[i].discount = data.changes.discount;
 
-				const availItems = await checkAvailable(oldCartItems[i], '5');
+				const availItems = await checkAvailable(oldCartItems[i], manageDetail&&manageDetail.StockId);
 
 				if (!availItems) {
 					res.status(400).json({ error: 'موجودی کافی نیست' });
