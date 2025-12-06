@@ -866,7 +866,7 @@ const findCartFunction = async (userIdRaw, manageId, pageSize = 10, offset = 0, 
 		for (let c = 0; c < (cartData && cartData.length); c++) {
             if (!userId && isSale && IsToday(cartData[c].initDate) !== 1) {
                 // TODO: what is this if for?
-                continue;
+                //continue;
             }
 			try {
 				for (let j = 0; j < cartData[c].cartItems.length; j++) {
