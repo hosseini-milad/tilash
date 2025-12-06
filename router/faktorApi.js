@@ -812,8 +812,7 @@ const findCartFunction = async (userIdRaw, manageId, pageSize = 10, offset = 0, 
             userId = '';
         }
 		const cartDataMatchCondition = {
-        
-			//result: { $exists: false },
+            taskStep:{$nin:["cancel"]},
 			manageId,
 		};
         if(fromDate){
