@@ -1898,7 +1898,7 @@ const totalCart = (cartArray) => {
     }
     return (cartListTotal)
 }
-router.post('/update-Item', jsonParser, async (req, res) => {
+router.post('/update-Item',auth, jsonParser, async (req, res) => {
 	const data = {
 		userId: req.body.userId ? req.body.userId : req.headers['userid'],
 		cartID: req.body.cartID,
