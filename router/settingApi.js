@@ -350,7 +350,7 @@ router.get('/list-bank', async (req,res)=>{
     const bankList = await bankAccounts.find({ }).lean()
     //var bankFull = []
     for(var i=0;i<bankList.length;i++){
-        bankList[i].title = bankList[i].title+" - " + bankList[i].DlCode
+        bankList[i].DlTitle = bankList[i].DlTitle+" - " + bankList[i].DlCode
     }
 
     res.json({data:bankList})
