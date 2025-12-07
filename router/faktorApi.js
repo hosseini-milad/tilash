@@ -1042,7 +1042,8 @@ const findPayValuePrice = (priceArray, payValue) => {
 }
 const findCartItemDetail = (cartItem, payValue, totalDiscount) => {
     var cartItemPrice = findPayValuePrice(cartItem.price, payValue)
-    var fixPrice = cartItem.fixPrice
+    if(cartItem.fixPrice)
+        cartItemPrice = fixPrice
     var tax = 0
     var discount = 0
     var totalPrice = 0
@@ -1063,8 +1064,7 @@ const findCartItemDetail = (cartItem, payValue, totalDiscount) => {
     }
     tax = (cartItemPrice * count - discount) * Number(TaxRate)
     totalPrice = (cartItemPrice * count - discount) * (1 + Number(TaxRate))
-    if(fixPrice)
-        totalPrice = fixPrice
+    
     return ({
         price: cartItemPrice, tax: tax,
         total: totalPrice, discount: discount
