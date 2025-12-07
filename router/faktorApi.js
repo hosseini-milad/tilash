@@ -708,7 +708,8 @@ const findCartFunction2 = async (userId, managerId,pageSize,offset,search) => {
             else
                 todayCartData.push({...cartData[c], userData: userData})
                 cartData[c] = { ...cartData[c] ,official}
-                cartDetail.push(findCartSum(cartData[c].cartItems,cartData[c].payValue,cartData[c].transportPrice))
+                cartDetail.push(findCartSum(cartData[c].cartItems,
+                    cartData[c].payValue,cartData[c].transportPrice))
             }
             catch { }
         }
@@ -1041,6 +1042,7 @@ const findPayValuePrice = (priceArray, payValue) => {
 }
 const findCartItemDetail = (cartItem, payValue, totalDiscount) => {
     var cartItemPrice = findPayValuePrice(cartItem.price, payValue)
+    var fixPrice = cartItem.fixPrice
     var tax = 0
     var discount = 0
     var totalPrice = 0
@@ -1061,6 +1063,8 @@ const findCartItemDetail = (cartItem, payValue, totalDiscount) => {
     }
     tax = (cartItemPrice * count - discount) * Number(TaxRate)
     totalPrice = (cartItemPrice * count - discount) * (1 + Number(TaxRate))
+    if(fixPrice)
+        totalPrice = fixPrice
     return ({
         price: cartItemPrice, tax: tax,
         total: totalPrice, discount: discount
@@ -1093,7 +1097,7 @@ const findCartData = async (cartNo) => {
         return ({ cart: [], cartDetail: [] })
     }
 }
-const findQuickCartSum = (cartItems, payValue, discount) => {
+const findQuickCartSum = (cartItems, payValue, discount ) => {
     if (!cartItems) return ({ totalPrice: 0, totalCount: 0 })
     var cartSum = 0;
     var cartCount = 0;
@@ -1101,6 +1105,7 @@ const findQuickCartSum = (cartItems, payValue, discount) => {
     var cartDiscount = 0;
     for (var i = 0; i < cartItems.length; i++) {
         try {//console.log(payValue)
+            var fixPrice = cartItems[i].fixPrice
             var cartItemPrice = ''
             try {
                 cartItemPrice = cartItems[i].price.find(item => item.saleType === payValue).price
@@ -1110,6 +1115,7 @@ const findQuickCartSum = (cartItems, payValue, discount) => {
                 cartItemPrice = cartItems[i].price && cartItems[i].price
                     .replace(/,/g, '').replace(/^\D+/g, '')
             }
+            if(fixPrice) cartItemPrice = fixPrice
             //console.log(cartItemPrice)
             var newCount = parseInt(cartItems[i].count.toString().replace(/,/g, '').replace(/^\D+/g, ''))
             if (cartItems[i].price)
@@ -1160,11 +1166,14 @@ const findCartSum = (cartItems, payValue,transportPrice) => {
     for (var i = 0; i < cartItems.length; i++) {
         //console.log(payValue)
         var cartItemPrice = findPayValuePrice(cartItems[i].price, payValue)
+        if(cartItems[i].fixPrice) cartItemPrice = cartItems[i].fixPrice
         //console.log(cartItemPrice)
         try {
-            if (cartItems[i].price)
+            if (cartItems[i].price){
                 cartSum += parseInt(cartItemPrice) *
                     parseInt(cartItems[i].count.toString().replace(/,/g, '').replace(/^\D+/g, ''))
+                    
+            }
             if (cartItems[i].count)
                 cartCount += parseInt(cartItems[i].count.toString().replace(/,/g, '').replace(/^\D+/g, ''))
             cartDescription += cartItems[i].description ? cartItems[i].description : ''
@@ -1917,6 +1926,7 @@ router.post('/update-Item',auth, jsonParser, async (req, res) => {
 				if (data.changes.description) oldCartItems[i].description = data.changes.description;
 				if (data.changes.count) oldCartItems[i].count = data.changes.count;
 				if (data.changes.discount) oldCartItems[i].discount = data.changes.discount;
+                if (data.changes.price) oldCartItems[i].fixPrice = data.changes.price;
 
 				const availItems = await checkAvailable(oldCartItems[i], manageDetail&&manageDetail.StockId);
 
