@@ -24,6 +24,7 @@ const CartSchema = new Schema({
     isQuote:{type:Boolean,default:false},
     Number:{type:String},
     InvoiceID:{type:String},
+    sepidarError:{type:String},
     branchId :{type:String},
     branchName :{type:String},
     transport :{type:String},

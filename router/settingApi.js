@@ -214,6 +214,11 @@ router.post('/multi-sepidar', jsonParser, auth, async (req, res) => {
                 errorMessage:error,
                 query:sepidarQuery
         })
+        await cart.updateOne({ cartNo: orderData.cartNo }, {
+            $set: { 
+                sepidarError: error
+            } 
+        })
 
         }
         }
