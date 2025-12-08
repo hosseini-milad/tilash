@@ -17,8 +17,7 @@ const CartToSepidar=async(data,faktorNo,user,stock,cartOff,
         var itemsToSepidar=[]
         for(var i=0;i<notNullCartItem.length;i++){
           const item = notNullCartItem[i]
-          var fee = 
-          fullPrice?findPayValuePrice(item.price,payValue?payValue:1):item.price
+          var fee = findPayValuePrice(item.price,payValue?payValue:"3")
           if(item.fixPrice) fee = item.fixPrice
           //console.log("sku: ",item.sku," discount: ",itemDiscount," fee: ",fee)
           const Price = normalPriceCount(fee,item.count,1)
