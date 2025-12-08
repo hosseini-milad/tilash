@@ -221,6 +221,7 @@ router.post('/sepidar-customer', async (req, res) => {
                     meliCode: sepidarResult[i].NationalID,
                     email: sepidarResult[i].Code + "@sharifoilco.com",
                     access: "customer",
+                    active:true,
                     cCode: sepidarResult[i].Code,
                     CustomerID: sepidarResult[i].CustomerID,
                     roleId:mainAddress?mainAddress.Title : '',

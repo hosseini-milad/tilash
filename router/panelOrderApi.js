@@ -480,6 +480,7 @@ router.post('/list-client',auth, jsonParser, async (req, res) => { // TODO: chec
                 var totalPrice = findCartSum(cartList[i].cartItems, cartList[i].payValue);
 
 				const bankData = await bankAccounts.findOne({BankAccountID:cartList[i].bank})
+				cartList[i].bankName = "-"
 				if(bankData){
 					cartList[i].bankName = bankData.DlTitle
 				}
