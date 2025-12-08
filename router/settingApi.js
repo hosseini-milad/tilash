@@ -159,6 +159,7 @@ router.post('/multi-sepidar', jsonParser, auth, async (req, res) => {
         }
         //const mergeOrder = await MergeOrder(orderDetails.map(item => item.cartItems),orderDetails)
         var query = []
+        var result = []
         //const recResult = await RecieptFunc()
         const adminData = await users.findOne({ _id: ObjectID(manageId) })
         for(var i = 0;i<orderDetails.length;i++){
@@ -177,7 +178,7 @@ router.post('/multi-sepidar', jsonParser, auth, async (req, res) => {
         try{
         var sepidarResult = await sepidarPOST(sepidarQuery, "/api/invoices", 
             ObjectID(adminData._id))
-        
+        result.push(sepidarResult)
         if (sepidarResult && sepidarResult.InvoiceID) {
             await CartToFaktor(sepidarQuery,customerData,adminData,sepidarResult)
             
@@ -219,7 +220,7 @@ router.post('/multi-sepidar', jsonParser, auth, async (req, res) => {
         catch{continue}
         }
         
-        res.json({ data: "sepidarResult",query,
+        res.json({ data: "sepidarResult",query,result,
             message: error?'':"سفارشات در سپیدار ثبت شد" })
     }
     catch (error) {
