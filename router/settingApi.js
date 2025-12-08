@@ -164,9 +164,9 @@ router.post('/multi-sepidar', jsonParser, auth, async (req, res) => {
         for(var i = 0;i<orderDetails.length;i++){
             var orderData = orderDetails[i]
             var cartItems = orderData.cartItems
-            const customerData = await customers.findOne({ _id: ObjectID(orderDetails[0].userId) })
+            const customerData = await customers.findOne({ _id: ObjectID(orderDetails[i].userId) })
         
-        const faktorNo = "T100" + orderDetails[0].cartNo
+        const faktorNo = "T100" + orderDetails[i].cartNo
         var sepidarQuery = await CartToSepidar(cartItems, faktorNo,
             customerData, 
             orderData.stockId,orderData.discount,
