@@ -150,6 +150,7 @@ router.post('/multi-sepidar', jsonParser, auth, async (req, res) => {
     var official = req.body.official?req.body.official:1
     
     var error=''
+    
     try {
         const orderDetails = await cart.find({ cartNo: { $in: orderList } })
         if(!orderDetails||!orderDetails.length){
@@ -157,7 +158,7 @@ router.post('/multi-sepidar', jsonParser, auth, async (req, res) => {
             return
         }
         //const mergeOrder = await MergeOrder(orderDetails.map(item => item.cartItems),orderDetails)
-        
+        var query = []
         //const recResult = await RecieptFunc()
         const adminData = await users.findOne({ _id: ObjectID(manageId) })
         for(var i = 0;i<orderDetails.length;i++){
@@ -172,9 +173,9 @@ router.post('/multi-sepidar', jsonParser, auth, async (req, res) => {
             orderData.cartNo,
             orderData&&orderData.payValue,'',
             orderData&&orderData.transportPrice)
-        
+        query.push(sepidarQuery)
         try{
-        var sepidarResult = await sepidarPOST(sepidarQuery, "/api/invoices", 
+        var sepidarResult = 0&&await sepidarPOST(sepidarQuery, "/api/invoices", 
             ObjectID(adminData._id))
         
         if (sepidarResult && sepidarResult.InvoiceID) {
@@ -216,10 +217,10 @@ router.post('/multi-sepidar', jsonParser, auth, async (req, res) => {
         }
         }
         catch{continue}
-        res.json({ data: sepidarResult,query:sepidarQuery, 
-            error, InvoiceID:sepidarResult.Number,
-            message: error?'':"سفارش در سپیدار ثبت شد" })
         }
+        
+        res.json({ data: "sepidarResult",query,
+            message: error?'':"سفارشات در سپیدار ثبت شد" })
     }
     catch (error) {
         res.status(500).json({ error: error.message })
