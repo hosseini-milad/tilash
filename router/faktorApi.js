@@ -1996,7 +1996,7 @@ router.post('/update-Item-cart', jsonParser, async (req, res) => {
                         const managerProfile = await profileModel.findOne({ profileCode: 'manager' }).lean();
                         const isManager = await userModel.findOne({ _id: adminId, profile: `${managerProfile._id}` }).lean();
                         if (!isManager) {
-                            return res.status(403).send({ error: 'شما مجاز به تغییر قیمت نیستید.' });
+                            //return res.status(403).send({ error: 'شما مجاز به تغییر قیمت نیستید.' });
                         }
                         // oldCartItems[i].price = changes.newPrice;
                         for (let j = 0; j < oldCartItems[i].price.length; j++) {
