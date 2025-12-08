@@ -1156,11 +1156,11 @@ const findQuickCartSum = (cartItems, payValue, discount ) => {
         cartDescription: cartDescription
     })
 }
-const findCartSum = (cartItems, payValue,transportPrice) => {
+const findCartSum = (cartItems, payValue,transportPrice,cartDiscount=0) => {
     if (!cartItems) return ({ totalPrice: 0, totalCount: 0 })
     var cartSum = 0;
     var cartCount = 0;
-    var cartDiscount = 0;
+    var cartDiscount = Number(cartDiscount);
     var cartDescription = ''
     var tPrice = transportPrice?Number(transportPrice):0
     for (var i = 0; i < cartItems.length; i++) {
@@ -1417,7 +1417,7 @@ router.post('/cart-find', jsonParser, async (req, res) => {
 
             }
         var orderData = findCartSum(cartItems, cartData.payValue,
-            cartData.transportPrice)
+            cartData.transportPrice,cartData.discount)
 
 		if (canEdit) {
 			// add productscount
