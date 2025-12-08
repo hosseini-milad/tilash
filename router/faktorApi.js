@@ -890,7 +890,8 @@ const findCartFunction = async (userIdRaw, manageId, pageSize = 10, offset = 0, 
 				cartData[c] = { ...cartData[c], official ,userData};
                 todayCartData.push({ ...cartData[c], userData });
 				cartDetail.push(findCartSum(cartData[c].cartItems, 
-                    cartData[c].payValue,cartData[c].transportPrice));
+                    cartData[c].payValue,cartData[c].transportPrice,
+                    cartData[c].discount));
 			} catch {}
 		}
 		if (qCartData) {
