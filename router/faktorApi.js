@@ -1378,7 +1378,7 @@ router.post('/cart-find', jsonParser, async (req, res) => {
         if (taskData && (
             taskData.taskStep == "initial" || taskData.taskStep == "edit"|| taskData.taskStep == "quote"))
             canEdit = 1
-
+        if(!cartData.InvoiceID) canEdit = 1
         var cartItems = cartData&&cartData.cartItems
         if (cartItems)
             for (var i = 0; i < cartItems.length; i++) {
@@ -1420,7 +1420,7 @@ router.post('/cart-find', jsonParser, async (req, res) => {
         var orderData = findCartSum(cartItems, cartData.payValue,
             cartData.transportPrice,cartData.discount)
 
-		if (canEdit) {
+		if (canEdit&&0) {
 			// add productscount
 			const userData = await userModel.findOne({ _id: cartData.manageId }).lean();
 			const stockId = userData.StockId ? userData.StockId : '13';
