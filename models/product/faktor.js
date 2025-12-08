@@ -12,7 +12,7 @@ const FaktorSchema = new Schema({
     managerName:{ type: String },
     faktorNo:{ type: String },
     isWeb:{type: Boolean, default:false},
-
+ 
     NetPrice:{ type: String },
     InvoiceID:{ type: String},
     InvoiceNumber:{ type: String },
@@ -23,7 +23,10 @@ const FaktorSchema = new Schema({
     sepidarResult:{type:Object},
     query:{type:Object},
     branchId :{type:String},
-    branchName :{type:String}
+    branchName :{type:String},
+    transport :{type:String},
+    transportPrice :{type:String},
+    bank :{type:String}
 });
 
 FaktorSchema.index({ initDate: -1 });

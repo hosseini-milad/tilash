@@ -485,7 +485,10 @@ router.post('/list-client',auth, jsonParser, async (req, res) => { // TODO: chec
                     ...cartList[i], status:tempStatus,
                     totalCart: totalPrice
                 };
-
+				const bankData = await bankAccounts.findOne({BankAccountID:cartList[i].bank})
+				if(bankData){
+					cartList[i].bankName = bankData.DlTitle
+				}
                 showCart.push(cartWithTaskStep);
             }
             var crmData = await crmlist.findOne({crmCode:"main"})
