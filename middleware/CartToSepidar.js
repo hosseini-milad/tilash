@@ -32,11 +32,12 @@ const CartToSepidar=async(data,faktorNo,user,stock,cartOff,
           //  NetPrice = normalPriceCount(item.fixPrice,item.count,1)- normalPriceCount(Discount)
           totalNetPrice += NetPrice
           const ItemDetail = await productModel.findOne({sku:item.sku})
+          var desc = item.desc?"("+item.desc+")":""
           itemsToSepidar.push({
             "ItemRef": toInt(ItemDetail&&ItemDetail.ItemID),
             "SKU":item.sku,
             "TracingRef": null,
-            "Description":item.title+"|"+item.sku+item.desc?"("+item.desc+")":"",
+            "Description":item.title+"|"+item.sku+desc,
             "StockRef":item.stock?item.stock:stock,
             "Quantity": toInt(item.count),
             "Fee": toInt(fee),
