@@ -144,8 +144,89 @@ router.post('/list-city', jsonParser, async (req, res) => {
         res.status(500).json({ message: error.message })
     }
 })
-
 router.post('/multi-sepidar', jsonParser, auth, async (req, res) => {
+    const orderList = req.body.orderNo
+    const manageId = req.headers['userid']
+    var official = req.body.official?req.body.official:1
+    
+    var error=''
+    try {
+        const orderDetails = await cart.find({ cartNo: { $in: orderList } })
+        if(!orderDetails||!orderDetails.length){
+            res.status(400).json({error:"سفارش پیدا نشد"})
+            return
+        }
+        //const mergeOrder = await MergeOrder(orderDetails.map(item => item.cartItems),orderDetails)
+        
+        //const recResult = await RecieptFunc()
+        const adminData = await users.findOne({ _id: ObjectID(manageId) })
+        for(var i = 0;i<orderDetails.length;i++){
+            var orderData = orderDetails[i]
+            var cartItems = orderData.cartItems
+            const customerData = await customers.findOne({ _id: ObjectID(orderDetails[0].userId) })
+        
+        const faktorNo = "T100" + orderDetails[0].cartNo
+        var sepidarQuery = await CartToSepidar(cartItems, faktorNo,
+            customerData, 
+            orderData.stockId,orderData.discount,
+            orderData.cartNo,
+            orderData&&orderData.payValue,'',
+            orderData&&orderData.transportPrice)
+        
+        try{
+        var sepidarResult = await sepidarPOST(sepidarQuery, "/api/invoices", 
+            ObjectID(adminData._id))
+        
+        if (sepidarResult && sepidarResult.InvoiceID) {
+            await CartToFaktor(sepidarQuery,customerData,adminData,sepidarResult)
+            
+            await orderLog.create({
+                    userId:manageId,
+                    orderNo: faktorNo,
+                    invoiceID:sepidarResult.InvoiceID,
+                    orderPrice: "123",
+                    orderCount:"12",
+                    orderItem:orderData,
+                    orderList:orderList,
+                    errorMessage:'',
+                    query:sepidarQuery
+            })
+            await cart.updateOne({ cartNo: orderData.cartNo }, {
+                $set: { 
+                    Number: sepidarResult.Number,
+                    InvoiceID: sepidarResult.InvoiceID
+                } 
+            })
+            
+        }
+        else{
+            error = sepidarResult && sepidarResult.Message
+            await orderLog.create({
+                userId:manageId,
+                orderNo: faktorNo,
+                invoiceID:'',
+                orderPrice: "123",
+                orderCount:"12",
+                orderItem:orderData,
+                orderList:orderList,
+                errorMessage:error,
+                query:sepidarQuery
+        })
+
+        }
+        }
+        catch{continue}
+        res.json({ data: sepidarResult,query:sepidarQuery, 
+            error, InvoiceID:sepidarResult.Number,
+            message: error?'':"سفارش در سپیدار ثبت شد" })
+        }
+    }
+    catch (error) {
+        res.status(500).json({ error: error.message })
+    }
+})
+
+router.post('/multi-sepidar-old', jsonParser, auth, async (req, res) => {
     const orderList = req.body.orderNo
     const manageId = req.headers['userid']
     var official = req.body.official?req.body.official:1
