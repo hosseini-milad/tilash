@@ -17,8 +17,9 @@ const CartToSepidar=async(data,faktorNo,user,stock,cartOff,
         var itemsToSepidar=[]
         for(var i=0;i<notNullCartItem.length;i++){
           const item = notNullCartItem[i]
-          const fee = fullPrice?findPayValuePrice(item.price,payValue?payValue:4):item.price
-          
+          var fee = 
+          fullPrice?findPayValuePrice(item.price,payValue?payValue:1):item.price
+          if(item.fixPrice) fee = item.fixPrice
           //console.log("sku: ",item.sku," discount: ",itemDiscount," fee: ",fee)
           const Price = normalPriceCount(fee,item.count,1)
           const itemDiscount = MultiplySum(item.discount,totalOff,1)
@@ -27,15 +28,15 @@ const CartToSepidar=async(data,faktorNo,user,stock,cartOff,
           //const Discount = discount?normalPriceCount(discount,item.count):0.0000
           const Tax = normalPriceCount(Price-Discount,1,TaxRate)
           var NetPrice = normalPriceCount(Price) - normalPriceCount(Discount) + normalPriceCount(Tax)
-          if(item.fixPrice)
-            NetPrice = normalPriceCount(item.fixPrice,item.count,1)- normalPriceCount(Discount)
+          //if(item.fixPrice)
+          //  NetPrice = normalPriceCount(item.fixPrice,item.count,1)- normalPriceCount(Discount)
           totalNetPrice += NetPrice
           const ItemDetail = await productModel.findOne({sku:item.sku})
           itemsToSepidar.push({
             "ItemRef": toInt(ItemDetail&&ItemDetail.ItemID),
             "SKU":item.sku,
             "TracingRef": null,
-            "Description":item.title+"|"+item.sku+"("+item.desc+")",
+            "Description":item.title+"|"+item.sku+item.desc?"("+item.desc+")":"",
             "StockRef":item.stock?item.stock:stock,
             "Quantity": toInt(item.count),
             "Fee": toInt(fee),
