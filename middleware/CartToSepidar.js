@@ -26,7 +26,9 @@ const CartToSepidar=async(data,faktorNo,user,stock,cartOff,
           totalNetCount += parseInt(item.count)
           //const Discount = discount?normalPriceCount(discount,item.count):0.0000
           const Tax = normalPriceCount(Price-Discount,1,TaxRate)
-          const NetPrice = normalPriceCount(Price) - normalPriceCount(Discount) + normalPriceCount(Tax)
+          var NetPrice = normalPriceCount(Price) - normalPriceCount(Discount) + normalPriceCount(Tax)
+          if(item.fixPrice)
+            NetPrice = normalPriceCount(item.fixPrice,item.count,1)
           totalNetPrice += NetPrice
           const ItemDetail = await productModel.findOne({sku:item.sku})
           itemsToSepidar.push({
