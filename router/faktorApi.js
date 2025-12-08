@@ -1043,7 +1043,7 @@ const findPayValuePrice = (priceArray, payValue) => {
 const findCartItemDetail = (cartItem, payValue, totalDiscount) => {
     var cartItemPrice = findPayValuePrice(cartItem.price, payValue)
     if(cartItem.fixPrice)
-        cartItemPrice = fixPrice
+        cartItemPrice = cartItem.fixPrice
     var tax = 0
     var discount = 0
     var totalPrice = 0
