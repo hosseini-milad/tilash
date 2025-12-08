@@ -2949,6 +2949,7 @@ router.post('/customer-find', auth, jsonParser, async (req, res) => {
                     $or: [
                         { username: { $regex: search, $options: 'i' } },
                         { phone: { $regex: search, $options: 'i' } },
+                        { mobile: { $regex: search, $options: 'i' } },
                         { Code: { $regex: search, $options: 'i' } }
                     ],
                 },
