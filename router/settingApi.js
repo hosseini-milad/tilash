@@ -347,7 +347,7 @@ router.post('/reg-sanad-sepidar', jsonParser, auth, async (req, res) => {
                 "Amount": faktorData.NetPrice
             }]
         }
-        var recieptResult = await sepidarPOST(payQuery, "/api/Receipts/BasedOnInvoice", ObjectID(manageId))
+        var recieptResult = 0&&await sepidarPOST(payQuery, "/api/Receipts/BasedOnInvoice", ObjectID(manageId))
         
         ReceiptID = recieptResult&&recieptResult.ReceiptID
         if(!ReceiptID){
