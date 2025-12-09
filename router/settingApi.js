@@ -180,7 +180,8 @@ router.post('/multi-sepidar', jsonParser, auth, async (req, res) => {
             ObjectID(adminData._id))
         result.push(sepidarResult)
         if (sepidarResult && sepidarResult.InvoiceID) {
-            await CartToFaktor(sepidarQuery,customerData,adminData,sepidarResult)
+            await CartToFaktor(sepidarQuery,customerData,adminData,
+                sepidarResult, orderData)
             
             await orderLog.create({
                     userId:manageId,
@@ -195,8 +196,10 @@ router.post('/multi-sepidar', jsonParser, auth, async (req, res) => {
             })
             await cart.updateOne({ cartNo: orderData.cartNo }, {
                 $set: { 
+                    status:"done",
                     Number: sepidarResult.Number,
-                    InvoiceID: sepidarResult.InvoiceID
+                    InvoiceID: sepidarResult.InvoiceID,
+                    sepidarError:''
                 } 
             })
             
@@ -318,7 +321,70 @@ router.post('/multi-sepidar-old', jsonParser, auth, async (req, res) => {
         res.status(500).json({ error: error.message })
     }
 })
+
+
 router.post('/reg-sanad-sepidar', jsonParser, auth, async (req, res) => {
+    const InvoiceIDList = req.body.InvoiceID
+    //const NumberID = req.body.NumberID
+    const manageId = req.headers['userid']
+    result = []
+    const faktorList = await faktor.find({ InvoiceID: { $in: InvoiceIDList } })
+    for (var i=0;i<faktorList.length;i++){
+        const faktorData = faktorList[i]
+        const InvoiceID = faktorData.InvoiceID
+        const bankCode = faktorData.bankCode?faktorData.bankCode:"1"
+        var payQuery={
+            "GUID": "124ab075-fc79-417f-b8cf-2a"+
+                Math.floor(Math.random()*9000000000) + 1000000000,
+            "InvoiceID": InvoiceID,
+            "Description": faktorData.description,
+            "Date":new Date(),
+            "Drafts": [{
+                "BankAccountID": bankCode,
+                "Description": "حواله",
+                "Number": faktorData.description?faktorData.description:"000",
+                "Date":new Date(),
+                "Amount": faktorData.NetPrice
+            }]
+        }
+        var recieptResult = await sepidarPOST(payQuery, "/api/Receipts/BasedOnInvoice", ObjectID(manageId))
+        
+        ReceiptID = recieptResult&&recieptResult.ReceiptID
+        if(!ReceiptID){
+            result.push({
+                error:recieptResult&&recieptResult.Message,
+                query:payQuery,
+                InvoiceID:InvoiceID
+            })
+            continue
+            //res.status(400).json({error:recieptResult&&recieptResult.Message,query:recieptQuery})
+            //return
+        }
+        await transaction.create({
+            userId:manageId,
+            sepidarID:ReceiptID,
+            InvoiceID:InvoiceID,
+            sepidarResult:recieptResult,
+            bankCode:bankCode,
+            faktorNo:faktorData.faktorNo,
+            orderNo:faktorData.Number,
+            payStatus:"done",
+            payValue:faktorData.NetPrice}
+        )
+        await faktor.updateOne({InvoiceID:InvoiceID},
+            {$set:{ReceiptID:ReceiptID,Status:"register"}}
+        ) 
+        result.push({
+            error:'',
+            result:ReceiptID,
+            query:payQuery,
+            InvoiceID:InvoiceID
+        })
+    }
+    
+    res.json({message:"سند سفارش ثبت شد",ReceiptID:ReceiptID,query:recieptQuery})
+})
+router.post('/reg-sanad-sepidar-old', jsonParser, auth, async (req, res) => {
     const InvoiceID = req.body.InvoiceID
     const NumberID = req.body.NumberID
     var ReceiptID=''
@@ -345,7 +411,6 @@ router.post('/reg-sanad-sepidar', jsonParser, auth, async (req, res) => {
     ) 
     res.json({message:"سند سفارش ثبت شد",ReceiptID:ReceiptID,query:recieptQuery})
 })
-
 router.post('/list-faktors', auth, async (req, res) => {
 	try {
         const userId = req.headers['userid'];

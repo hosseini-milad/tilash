@@ -12,6 +12,7 @@ const transSchema = new mongoose.Schema({
   saleReferenceId:{type:String},
   sepidarID:{type:String},
   InvoiceID:{type:String},
+  sepidarResult:{type:Object},
   date:{type:Date,default:Date.now()}
 });
 
