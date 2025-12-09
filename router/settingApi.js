@@ -382,7 +382,7 @@ router.post('/reg-sanad-sepidar', jsonParser, auth, async (req, res) => {
         })
     }
     
-    res.json({message:"سند سفارش ثبت شد",ReceiptID:ReceiptID,query:recieptQuery})
+    res.json({message:"سند سفارش ثبت شد",result:result})
 })
 router.post('/reg-sanad-sepidar-old', jsonParser, auth, async (req, res) => {
     const InvoiceID = req.body.InvoiceID
