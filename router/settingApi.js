@@ -337,7 +337,7 @@ router.post('/reg-sanad-sepidar', jsonParser, auth, async (req, res) => {
             "GUID": "124ab075-fc79-417f-b8cf-2a"+
                 (Math.floor(Math.random()*9000000000) + 1000000000),
             "InvoiceID": InvoiceID,
-            "Description": faktorData.description,
+            "Description": faktorData.Number,
             "Date":new Date(),
             "Drafts": [{
                 "BankAccountID": bankCode,
