@@ -592,7 +592,8 @@ router.post('/create-customer', jsonParser, async (req, res) => {
         { 
             CustomerID: sepidarResult.CustomerID,
             ...data,
-            creator: agent
+            creator: agent,
+            date:Date.now()
         },
         { $unset: { agent: 1 } }
       );
@@ -632,6 +633,7 @@ router.post('/my-customer', auth, jsonParser, async (req, res) => {
 		}
 		const aggregation = [
 			{ $match: matchCondition },
+      { $sort: {date:-1}},
       { $limit: 10}
 		];
 		const data = await customer.aggregate(aggregation);
