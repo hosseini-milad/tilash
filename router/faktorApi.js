@@ -2026,6 +2026,7 @@ router.post('/update-Item-cart', jsonParser, async (req, res) => {
 		if (taskData && (canEditSteps.includes(taskData.taskStep))) {
             canEdit = 1;
         }
+        if(!CartData.InvoiceID) canEdit = 1
 		return res.json({ ...cartDetails, message: 'آیتم بروز شد.', canEdit });
 	} catch (error) {
 		return res.status(500).json({ message: error.message });
