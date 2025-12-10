@@ -26,7 +26,7 @@ const FaktorSchema = new Schema({
     branchName :{type:String},
     transport :{type:String},
     transportPrice :{type:String},
-    bankCode :{type:String},
+    bank :{type:String},
     bankDate :{type: Date}
 });
 

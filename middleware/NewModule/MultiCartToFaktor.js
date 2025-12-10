@@ -21,6 +21,7 @@ const CartToFaktor=async(query,userData,manageData,result,orderData)=>{
         transport :orderData.transport,
         transportPrice :orderData.transportPrice,
         bank :orderData.bank,
+        bankDate :orderData.bankDate,
         InvoiceID:result.InvoiceID,
         InvoiceNumber:result.Number,
         totalCount:query.totalNetCount

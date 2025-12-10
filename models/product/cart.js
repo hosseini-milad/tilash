@@ -29,7 +29,8 @@ const CartSchema = new Schema({
     branchName :{type:String},
     transport :{type:String},
     transportPrice :{type:String},
-    bank :{type:String}
+    bank :{type:String},
+    bankDate :{type:Date}
 })
 
 CartSchema.index({ initDate: -1 });
