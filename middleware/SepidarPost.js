@@ -6,7 +6,7 @@ const { SEPIDAR_URL,SEPIDAR_HEADER, ADMIN_HEADER,MARKAZI_HEADER,
  
 const sepidarPOST=async(data,action,user,admin)=>{
     var header = SEPIDAR_HEADER
-    if(admin) header = ADMIN_HEADER 
+    /*if(admin) header = ADMIN_HEADER 
     const userDetail = user&&await users.findOne({_id:user})
     
     if(userDetail&&userDetail.group === "bazaryab")
@@ -14,7 +14,7 @@ const sepidarPOST=async(data,action,user,admin)=>{
     else if(userDetail&&userDetail.StockId==="6")
         header = SEPIDAR_HEADER_HESARAK
     else if(await FindProfile(userDetail&&userDetail.profile,"innerSale"))
-        header = MARKAZI_HEADER
+        header = MARKAZI_HEADER*/
     var response = '';
     try{    response = await fetch(SEPIDAR_URL+action,
             {method: 'POST' ,headers:JSON.parse(header),
