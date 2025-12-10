@@ -780,14 +780,16 @@ router.post('/canSubmitOrderForCustomer', jsonParser, auth, async (req, res) => 
 
 router.post('/cart', jsonParser, auth, async (req, res) => {
     try {
-        const { userId, offset = 0, pageSize = 10, search, dateFrom, dateTo } = req.body;
+        const { userId, offset = 0, pageSize = 10, search, dateFrom, dateTo ,isQuote=0} = req.body;
         const skip = parseInt(offset);
         const limit = parseInt(pageSize);
         const canSubmit = userId?await checkIfCanSubmitOrderForThisCustomer(req.headers['userid'], userId):1;
         if (!canSubmit) {
             return res.status(400).json({ message: 'امکان ثبت سفارش برای این مشتری برای شما وجود ندارد.' });
         }
-		const cartDetails = await findCartFunction(userId, req.headers['userid'], limit, skip, search, dateFrom, dateTo);
+		const cartDetails = await findCartFunction(userId, 
+            req.headers['userid'], limit, skip, 
+            search, dateFrom, dateTo,isQuote);
         const response = {
             canSubmit: true,
             ...cartDetails,
@@ -802,7 +804,8 @@ router.post('/cart', jsonParser, auth, async (req, res) => {
 	}
 });
 
-const findCartFunction = async (userIdRaw, manageId, pageSize = 10, offset = 0, search, dateFrom = [], dateTo = []) => {
+const findCartFunction = async (userIdRaw, manageId, pageSize = 10, offset = 0, 
+    search, dateFrom = [], dateTo = [],isQuote=0) => {
     let isSale;
     var userId=userIdRaw
     try {
@@ -830,6 +833,7 @@ const findCartFunction = async (userIdRaw, manageId, pageSize = 10, offset = 0, 
         }
         //console.log(cartDataMatchCondition)
 		const cartDataAggregation = [
+            { $match: isQuote?{isQuote:true}:{isQuote:false}},
             { $match: cartDataMatchCondition },
             { $sort: { initDate: -1 } },
             { $skip: offset },

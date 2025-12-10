@@ -387,6 +387,7 @@ router.post('/list-client',auth, jsonParser, async (req, res) => { // TODO: chec
             customer: req.body.customer,
             manager: req.body.manager,
             brand: req.body.brand,
+			isQuote:req.body.isQuote,
             dateFrom:
                 req.body.dateFrom ? req.body.dateFrom[0] + "/" +
                     req.body.dateFrom[1] + "/" + req.body.dateFrom[2] + " " + "00:00" :
@@ -425,6 +426,7 @@ router.post('/list-client',auth, jsonParser, async (req, res) => { // TODO: chec
         clientList.push(adminData._id.toString())
             var showCart = [];
             const cartList = await carts.aggregate([
+				{ $match: isQuote?{isQuote:true}:{isQuote:false}},
                 { $addFields: { "userId": { "$toObjectId": "$userId" } } },
                 {
                     $lookup: {
