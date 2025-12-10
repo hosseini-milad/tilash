@@ -333,18 +333,18 @@ router.post('/reg-sanad-sepidar', jsonParser, auth, async (req, res) => {
         const faktorData = faktorList[i]
         const InvoiceID = faktorData.InvoiceID
         const bankCode = faktorData.bank?faktorData.bank:"1"
-        var fDate = faktorData.bankDate?faktorData.bankDate:Date.now()
+
         var payQuery={
             "GUID": "124ab075-fc79-417f-b8cf-2a"+
                 (Math.floor(Math.random()*9000000000) + 1000000000),
             "InvoiceID": InvoiceID,
             "Description": faktorData.InvoiceNumber,
-            "Date":fDate,
+            "Date":faktorData.bankDate,
             "Drafts": [{
                 "BankAccountID": bankCode,
                 "Description": "حواله",
                 "Number": faktorData.description?faktorData.description:"000",
-                "Date":new Date(),
+                "Date":faktorData.bankDate,
                 "Amount": faktorData.NetPrice
             }]
         }

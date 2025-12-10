@@ -2322,13 +2322,15 @@ router.post('/quick-to-cart', jsonParser, async (req, res) => {
 		const userId = req.body.userId ? req.body.userId : req.headers['userid'];
 		const { branchName, branchId, date,  transport ,
                 transportPrice,bank,bankDate,cartID, isQuote } = req.body;
-
+        var now = new Date()
+        var bDate = bankDate?bankDate:now.toLocaleDateString('en')
 		const data = {
 			userId: userId,
 			manageId: req.headers['userid'],
 			date,
             transport,transportPrice,
-            bank,bankDate,
+            bank,
+            bankDate:bDate,
 			progressDate: Date.now(),
 			branchName,
 			branchId,
