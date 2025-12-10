@@ -267,6 +267,7 @@ router.post('/list-customers', auth, jsonParser, async (req, res) => {
           { phone: new RegExp('.*' + customer + '.*') },
           { cName: new RegExp('.*' + customer + '.*') },
           { username: new RegExp('.*' + customer + '.*') },
+          { cCode: new RegExp('.*' + customer + '.*') },
           { mobile: new RegExp('.*' + customer + '.*') },
         ],
       })
