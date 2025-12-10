@@ -2944,7 +2944,9 @@ router.post('/customer-find', auth, jsonParser, async (req, res) => {
         if (search) {
             userMatchConditoin['$or'] = [
                 { username: { $regex: search, $options: 'i' } },
-                { Code: { $regex: search, $options: 'i' } }
+                { phone: { $regex: search, $options: 'i' } },
+                { mobile: { $regex: search, $options: 'i' } },
+                { cCode: { $regex: search, $options: 'i' } }
             ];
         }
 		const customerMatchCondition = {
