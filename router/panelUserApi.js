@@ -588,7 +588,7 @@ router.post('/create-customer', jsonParser, async (req, res) => {
     }
     //console.log(userInfo)
     if (sepidarResult.CustomerID) {
-      await customer.create(
+      await customerModel.create(
         { ...data,
             CustomerID: sepidarResult.CustomerID,
             creator: agent
@@ -1295,14 +1295,14 @@ const SepidarUser = (data) => {
     EconomicCode: data.roleId,
     Addresses: [
       {
-        Title: data.Address ? data.Address.split(" ")[0] : "شریف اویل",
+        Title: data.Address ? data.Address.split(" ")[0] : "تی لش",
         IsMain: true,
         CityRef: 1,
         Address: data.Address,
         ZipCode: data.postalCode,
         Latitude: "", //data.nif?data.nif.split(','||'|')[0]:"",
         Longitude: "", //data.nif?data.nif.split(',')[0]:"",
-        GUID: "3fa85f64-5717-4562-b3fc-2c" + data.meliCode,
+        GUID: "3fa85f64-5717-4562-b3fc-2c" + data.phone,
       },
     ],
   };
