@@ -589,8 +589,9 @@ router.post('/create-customer', jsonParser, async (req, res) => {
     //console.log(userInfo)
     if (sepidarResult.CustomerID) {
       await customerModel.create(
-        { ...data,
+        { 
             CustomerID: sepidarResult.CustomerID,
+            ...data,
             creator: agent
         },
         { $unset: { agent: 1 } }
