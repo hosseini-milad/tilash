@@ -570,7 +570,7 @@ router.post('/create-customer', jsonParser, async (req, res) => {
     //console.log(customerQuery)
     if (!customerQuery) {
       res.status(400).json({
-        message: "اطلاعات کافی نیست، کدملی، کدپستی و شماره تماس اجباری است",
+        message: "اطلاعات کافی نیست، شماره تماس اجباری است",
         error: "error occure",
       });
       return;
@@ -1280,7 +1280,7 @@ function normalNumber(number) {
 }
 const SepidarUser = (data) => {
   if (!data) return "";
-  if (!data.meliCode || !data.postalCode || (!data.phone && !data.mobile))
+  if ((!data.phone && !data.mobile))
     return "";
   var max = 999999999999;
   var min = 100000000000;
