@@ -551,7 +551,7 @@ router.post("/customers-mobile", jsonParser, async (req, res) => {
 });
 
 router.post('/create-customer', jsonParser, async (req, res) => {
-	try {
+	try { 
 		const agent = req.headers['userid'];
 		const data = req.body;
 		const checkIfCustomerExistsCondition = {
@@ -566,8 +566,43 @@ router.post('/create-customer', jsonParser, async (req, res) => {
 		data.username = data.sName + ' ' + data.cName;
 		data.agent = agent;
 		data.active = true;
-		const userData = await customerModel.create(data);
-		return res.json({ data: userData, success: 'مشتری اضافه شد' });
+    const customerQuery = SepidarUser(data);
+    //console.log(customerQuery)
+    if (!customerQuery) {
+      res.status(400).json({
+        message: "اطلاعات کافی نیست، کدملی، کدپستی و شماره تماس اجباری است",
+        error: "error occure",
+      });
+      return;
+    }
+    const sepidarResult =
+      customerQuery &&
+      (await sepidarPOST(customerQuery, "/api/Customers", "", "admin"));
+    //console.log(sepidarResult)
+    if (!sepidarResult || sepidarResult.Message) {
+      res.status(400).json({
+        message: sepidarResult ? sepidarResult.Message : "Error",
+        error: "error occure",
+      });
+      return;
+    }
+    //console.log(userInfo)
+    if (sepidarResult.CustomerID) {
+      await customer.create(
+        { ...data,
+            CustomerID: sepidarResult.CustomerID,
+            creator: agent
+        },
+        { $unset: { agent: 1 } }
+      );
+    }
+    return res.json({
+      query: customerQuery,
+      result: sepidarResult,
+      message: "مشتری در سپیدار ثبت شد",
+    });
+		//const userData = await customerModel.create(data);
+		//res.json({ data: userData, success: 'مشتری اضافه شد' });
 	} catch (error) {
 		return res.status(500).json({ message: error.message });
 	}
