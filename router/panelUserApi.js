@@ -555,9 +555,8 @@ router.post('/create-customer', jsonParser, async (req, res) => {
 		const agent = req.headers['userid'];
 		const data = req.body;
 		const checkIfCustomerExistsCondition = {
-			roleId: data.roleId,
-			meliCode: data.meliCode,
 			mobile: data.mobile,
+			phone: data.phone,
 		};
 		const customer = await customerModel.findOne(checkIfCustomerExistsCondition).lean();
 		if (customer) {
