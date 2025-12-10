@@ -558,6 +558,7 @@ router.post('/create-customer', jsonParser, async (req, res) => {
 			mobile: data.mobile,
 			phone: data.phone,
 		};
+    data.mobile = data.phone
 		const customer = await customerModel.findOne(checkIfCustomerExistsCondition).lean();
 		if (customer) {
 			return res.status(400).send({ message: 'مشتری با این اطلاعات قبلا ثبت شده است.' });
