@@ -26,7 +26,8 @@ const FaktorSchema = new Schema({
     branchName :{type:String},
     transport :{type:String},
     transportPrice :{type:String},
-    bank :{type:String}
+    bankCode :{type:String},
+    bankDate :{type: Date}
 });
 
 FaktorSchema.index({ initDate: -1 });

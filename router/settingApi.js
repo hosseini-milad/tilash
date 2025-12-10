@@ -332,13 +332,14 @@ router.post('/reg-sanad-sepidar', jsonParser, auth, async (req, res) => {
     for (var i=0;i<faktorList.length;i++){
         const faktorData = faktorList[i]
         const InvoiceID = faktorData.InvoiceID
-        const bankCode = faktorData.bankCode?faktorData.bankCode:"1"
+        const bankCode = faktorData.bank?faktorData.bank:"1"
+        var fDate = faktorData.bankDate?faktorData.bankDate:Date.now()
         var payQuery={
             "GUID": "124ab075-fc79-417f-b8cf-2a"+
                 (Math.floor(Math.random()*9000000000) + 1000000000),
             "InvoiceID": InvoiceID,
             "Description": faktorData.InvoiceNumber,
-            "Date":new Date(),
+            "Date":fDate,
             "Drafts": [{
                 "BankAccountID": bankCode,
                 "Description": "حواله",
@@ -494,6 +495,20 @@ router.post('/list-faktors', auth, async (req, res) => {
 		const filter = aggregationResult?.result || [];
 		const bankList = await bankAccounts.find({ limit: adminData.username }).lean();
 		return res.json({ filter, tabs, size, bankList });
+	} catch (error) {
+		return res.status(500).json({ message: error.message });
+	}
+});
+router.post('/edit-faktor', auth, async (req, res) => {
+	try {
+        const userId = req.headers['userid'];
+        const { faktorNo, bankDate,bank } = req.body;
+        
+        const result = await faktor.updateOne({faktorNo:faktorNo},
+            {bankDate,bank}
+        );
+		
+		return res.json({ data:result });
 	} catch (error) {
 		return res.status(500).json({ message: error.message });
 	}
