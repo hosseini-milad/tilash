@@ -891,6 +891,10 @@ const findCartFunction = async (userIdRaw, manageId, pageSize = 10, offset = 0,
 				if (userData.cName && userData.cName.includes('مصرف')) {
                     official = 0;
                 }
+                userData = await customers.findOne({ _id: cartData[c].userId }).lean();
+                var bankData = cartData.bank&&
+                await bankAccounts.findOne({ BankAccountID: cartData.bank})
+                cartData.bankName = bankData&&bankData.DlTitle
 				cartData[c] = { ...cartData[c], official ,userData};
                 todayCartData.push({ ...cartData[c], userData });
 				cartDetail.push(findCartSum(cartData[c].cartItems, 
@@ -908,7 +912,8 @@ const findCartFunction = async (userIdRaw, manageId, pageSize = 10, offset = 0,
 					qCartData.cartItems[j].productData = productData;
 				} catch {}
 			}
-			qCartDetail = findQuickCartSum(qCartData.cartItems, qCartData.payValue, qCartData.discount);
+			qCartDetail = findQuickCartSum(qCartData.cartItems, qCartData.payValue, 
+                qCartData.discount, qCartData.transportPrice);
 		}
 
         const response = {
@@ -1102,12 +1107,13 @@ const findCartData = async (cartNo) => {
         return ({ cart: [], cartDetail: [] })
     }
 }
-const findQuickCartSum = (cartItems, payValue, discount ) => {
+const findQuickCartSum = (cartItems, payValue, discount ,transportPrice) => {
     if (!cartItems) return ({ totalPrice: 0, totalCount: 0 })
     var cartSum = 0;
     var cartCount = 0;
     var cartDescription = ''
     var cartDiscount = 0;
+    var tPrice = Number(transportPrice)
     for (var i = 0; i < cartItems.length; i++) {
         try {//console.log(payValue)
             var fixPrice = cartItems[i].fixPrice
@@ -1151,13 +1157,18 @@ const findQuickCartSum = (cartItems, payValue, discount ) => {
                 (parseInt(cartSum) *
                     parseInt(discount) / 100)
     }
+    var totalPrice = (totalPriceNoTax * (1 + Number(TaxRate)))
+    if(tPrice){
+        totalPrice += tPrice
+    }
     const totalPriceNoTax = cartSum - cartDiscount
     return ({
         totalFee: cartSum,
         totalCount: cartCount,
+        transportPrice:tPrice,
         totalDiscount: cartDiscount,
         totalTax: (totalPriceNoTax * Number(TaxRate)),
-        totalPrice: (totalPriceNoTax * (1 + Number(TaxRate))),
+        totalPrice: totalPrice,
         cartDescription: cartDescription
     })
 }
@@ -1740,7 +1751,10 @@ router.post('/update-desc', jsonParser, async (req, res) => {
         const data = {
             description: req.body.description,
             discount: req.body.discount,
-            payValue: req.body.payValue
+            payValue: req.body.payValue,
+            bank:req.body.bank ,
+            transport:req.body.transport,
+            transportPrice:req.body.transportPrice,
         }
         if (cartNo) {
             await cart.updateOne({ cartNo }, { ...data });
