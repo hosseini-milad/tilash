@@ -891,6 +891,10 @@ const findCartFunction = async (userIdRaw, manageId, pageSize = 10, offset = 0,
 				if (userData.cName && userData.cName.includes('مصرف')) {
                     official = 0;
                 }
+                userData = await customers.findOne({ _id: cartData[c].userId }).lean();
+                var bankData = cartData.bank&&
+                await bankAccounts.findOne({ BankAccountID: cartData.bank})
+                cartData.bankName = bankData&&bankData.DlTitle
 				cartData[c] = { ...cartData[c], official ,userData};
                 todayCartData.push({ ...cartData[c], userData });
 				cartDetail.push(findCartSum(cartData[c].cartItems, 
@@ -908,7 +912,8 @@ const findCartFunction = async (userIdRaw, manageId, pageSize = 10, offset = 0,
 					qCartData.cartItems[j].productData = productData;
 				} catch {}
 			}
-			qCartDetail = findQuickCartSum(qCartData.cartItems, qCartData.payValue, qCartData.discount);
+			qCartDetail = findQuickCartSum(qCartData.cartItems, qCartData.payValue, 
+                qCartData.discount, qCartData.transportPrice);
 		}
 
         const response = {
@@ -1102,12 +1107,13 @@ const findCartData = async (cartNo) => {
         return ({ cart: [], cartDetail: [] })
     }
 }
-const findQuickCartSum = (cartItems, payValue, discount ) => {
+const findQuickCartSum = (cartItems, payValue, discount ,transportPrice) => {
     if (!cartItems) return ({ totalPrice: 0, totalCount: 0 })
     var cartSum = 0;
     var cartCount = 0;
     var cartDescription = ''
     var cartDiscount = 0;
+    var tPrice = Number(transportPrice)
     for (var i = 0; i < cartItems.length; i++) {
         try {//console.log(payValue)
             var fixPrice = cartItems[i].fixPrice
@@ -1152,12 +1158,17 @@ const findQuickCartSum = (cartItems, payValue, discount ) => {
                     parseInt(discount) / 100)
     }
     const totalPriceNoTax = cartSum - cartDiscount
+    var totalPrice = (totalPriceNoTax * (1 + Number(TaxRate)))
+    if(tPrice){
+        totalPrice += tPrice
+    }
     return ({
         totalFee: cartSum,
         totalCount: cartCount,
+        transportPrice:tPrice,
         totalDiscount: cartDiscount,
         totalTax: (totalPriceNoTax * Number(TaxRate)),
-        totalPrice: (totalPriceNoTax * (1 + Number(TaxRate))),
+        totalPrice: totalPrice,
         cartDescription: cartDescription
     })
 }
@@ -1740,7 +1751,10 @@ router.post('/update-desc', jsonParser, async (req, res) => {
         const data = {
             description: req.body.description,
             discount: req.body.discount,
-            payValue: req.body.payValue
+            payValue: req.body.payValue,
+            bank:req.body.bank ,
+            transport:req.body.transport,
+            transportPrice:req.body.transportPrice,
         }
         if (cartNo) {
             await cart.updateOne({ cartNo }, { ...data });
@@ -2366,6 +2380,9 @@ router.post('/quick-to-cart', jsonParser, async (req, res) => {
 		data.discount = qCartData && qCartData.discount;
 		const quickCartItems = qCartData && qCartData.cartItems;
 		data.cartItems = quickCartItems;
+        data.bank = data.bank?data.bank:(qCartData && qCartData.bank);
+        data.transport = data.transport?data.transport:(qCartData && qCartData.transport);
+        data.transportPrice = data.transportPrice?data.transportPrice:(qCartData && qCartData.transportPrice);
 		const stockId = adminData.StockId ? adminData.StockId : '5';
 
 		const availItems = !data.isQuote ? await checkCart(quickCartItems, stockId, data.payValue) : 0;
@@ -2378,9 +2395,10 @@ router.post('/quick-to-cart', jsonParser, async (req, res) => {
 		data.profileName = profileData && profileData.map((item) => item.profileName);
 		data.stockId = qCartData && qCartData.stockId;
 		cartLog.create({ ...data, ItemID: cartID, action: 'quick to cart' });
-		const smsResult = await SendSMS(userData.phone,"sabt",
+		const smsResult = 0&&await SendSMS(userData.phone,"sabt",
             userData.username&&userData.username.replace(/ /g,'_'),data.cartNo);
-		await cart.create(data);
+		//return res.json(data)
+            await cart.create(data);
 		status = 'create cart';
 		await quickCart.deleteOne({ userId: data.userId });
 		if (!isSale) {

@@ -4,7 +4,7 @@ var ObjectID = require('mongodb').ObjectID;
 
 const CheckSale=async(managerId)=>{
     const adminData = await users.findOne({_id:ObjectID(managerId)})
-    
+    if (!adminData) return(0)
     var adminProfiles = adminData.profile?adminData.profile.map(item=>ObjectID(item)):[]
     const adminProfile = adminData&&await profiles.find({ _id: {$in:adminProfiles}})
 
