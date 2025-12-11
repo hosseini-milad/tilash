@@ -479,7 +479,8 @@ router.post('/list-client',auth, jsonParser, async (req, res) => { // TODO: chec
 						continue;
                 }
 
-                var totalPrice = findCartSum(cartList[i].cartItems, cartList[i].payValue);
+                var totalPrice = findCartSum(cartList[i].cartItems, 
+					cartList[i].payValue,cartList[i].transportPrice);
 
 				const bankData = await bankAccounts.findOne({BankAccountID:cartList[i].bank})
 				cartList[i].bankName = "-"
@@ -515,12 +516,13 @@ router.post('/list-client',auth, jsonParser, async (req, res) => { // TODO: chec
     }
 });
 
-const findCartSum = (cartItems, payValue) => {
+const findCartSum = (cartItems, payValue, addition, discount) => {
     if (!cartItems) return ({ totalPrice: 0, totalCount: 0 })
     var cartSum = 0;
     var cartCount = 0;
-    var cartDiscount = 0;
+    var cartDiscount = discount?Number(discount):0;
     var cartTax = 0;
+	var cartTransport = addition?Number(addition):0
     var cartDescription = ''
     for (var i = 0; i < cartItems.length; i++) {
         //console.log(payValue)
@@ -550,8 +552,9 @@ const findCartSum = (cartItems, payValue) => {
         totalFee: cartSum,
         totalCount: cartCount,
         totalDiscount: cartDiscount,
+		cartTransport:cartTransport,
         totalTax: cartTax,
-        totalPrice: (cartSum +cartTax - cartDiscount),
+        totalPrice: (cartSum +cartTax+cartTransport - cartDiscount),
         cartDescription: cartDescription
     })
 }
