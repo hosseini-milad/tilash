@@ -492,8 +492,15 @@ router.post('/list-faktors', auth, async (req, res) => {
 			},
         ];
         const [aggregationResult] = await faktor.aggregate(aggregation);
+        
 		const size = aggregationResult?.totalSize[0]?.totalSize || 0;
 		const filter = aggregationResult?.result || [];
+        for(var i = 0;i<filter.length;i++){
+            var cartData = filter[0]
+            var bankData = cartData.bank&&
+            await bankAccounts.findOne({ BankAccountID: cartData.bank})
+            filter[0].bankName = bankData&&bankData.DlTitle
+        }
 		const bankList = await bankAccounts.find({ limit: adminData.username }).lean();
 		return res.json({ filter, tabs, size, bankList });
 	} catch (error) {

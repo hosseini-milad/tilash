@@ -891,6 +891,9 @@ const findCartFunction = async (userIdRaw, manageId, pageSize = 10, offset = 0,
 				if (userData.cName && userData.cName.includes('مصرف')) {
                     official = 0;
                 }
+                var bankData = cartData.bank&&
+                await bankAccounts.findOne({ BankAccountID: cartData.bank})
+                cartData.bankName = bankData&&bankData.DlTitle
 				cartData[c] = { ...cartData[c], official ,userData};
                 todayCartData.push({ ...cartData[c], userData });
 				cartDetail.push(findCartSum(cartData[c].cartItems, 
