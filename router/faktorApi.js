@@ -893,7 +893,7 @@ const findCartFunction = async (userIdRaw, manageId, pageSize = 10, offset = 0,
                 }
                 userData = await customers.findOne({ _id: cartData[c].userId }).lean();
                 var bankData = cartData.bank&&
-                await bankAccounts.findOne({ BankAccountID: cartData.bank})
+                await bankAccounts.findOne({ BankAccountID: cartData[c].bank})
                 cartData.bankName = bankData&&bankData.DlTitle
 				cartData[c] = { ...cartData[c], official ,userData};
                 todayCartData.push({ ...cartData[c], userData });
