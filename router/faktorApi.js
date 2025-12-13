@@ -837,7 +837,7 @@ const findCartFunction = async (userIdRaw, manageId, pageSize = 10, offset = 0,
             if(isQuoteTemp =="true") isQuote = true 
         }
 		const cartDataAggregation = [
-            { $match: isQuote?{isQuote:true}:{isQuote:false}},
+            { $match: isQuoteTemp?(isQuoteTemp =="true"?{isQuote:true}:{isQuote:false}):{}},
             { $match: cartDataMatchCondition },
             { $sort: { initDate: -1 } },
             { $skip: offset },
