@@ -805,7 +805,7 @@ router.post('/cart', jsonParser, auth, async (req, res) => {
 });
 
 const findCartFunction = async (userIdRaw, manageId, pageSize = 10, offset = 0, 
-    search, dateFrom = [], dateTo = [],isQuote=0) => {
+    search, dateFrom = [], dateTo = [],isQuoteTemp=0) => {
     let isSale;
     var userId=userIdRaw
     try {
@@ -832,6 +832,10 @@ const findCartFunction = async (userIdRaw, manageId, pageSize = 10, offset = 0,
             ]
         }
         //console.log(cartDataMatchCondition)
+        var isQuote = false 
+        if(isQuoteTemp){
+            if(isQuoteTemp =="true") isQuote = true 
+        }
 		const cartDataAggregation = [
             { $match: isQuote?{isQuote:true}:{isQuote:false}},
             { $match: cartDataMatchCondition },
