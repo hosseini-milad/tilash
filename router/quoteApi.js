@@ -472,8 +472,8 @@ const findCartItemDetail = (cartItem, payValue, totalDiscount) => {
                 count * (off) / 100
         //console.log(off+": "+cartDiscount)
     }
-    tax = (cartItemPrice * count - discount) * TaxRate
-    totalPrice = (cartItemPrice * count - discount) * (1 + TaxRate)
+    tax = (cartItemPrice * count - discount) * Number(TaxRate)
+    totalPrice = (cartItemPrice * count - discount) * (1 + Number(TaxRate))
     return ({
         price: cartItemPrice, tax: tax,
         total: totalPrice, discount: discount
@@ -545,8 +545,8 @@ const findQuickCartSum = (cartItems, payValue, discount) => {
         totalFee: cartSum,
         totalCount: cartCount,
         totalDiscount: cartDiscount,
-        totalTax: (totalPriceNoTax * TaxRate),
-        totalPrice: (totalPriceNoTax * (1 + TaxRate)),
+        totalTax: (totalPriceNoTax * Number(TaxRate)),
+        totalPrice: (totalPriceNoTax * (1 + Number(TaxRate))),
         cartDescription: cartDescription
     })
 }
@@ -574,7 +574,7 @@ const findCartSum = (cartItems, payValue) => {
                 else
                     cartDiscount += parseInt(cartItemPrice)
                         * Number(cartItems[i].count) *
-                        (1 + TaxRate) * (off) / 100
+                        (1 + Number(TaxRate)) * (off) / 100
             }
         } catch { }
     }
@@ -582,8 +582,8 @@ const findCartSum = (cartItems, payValue) => {
         totalFee: cartSum,
         totalCount: cartCount,
         totalDiscount: cartDiscount,
-        totalTax: (cartSum * TaxRate),
-        totalPrice: (cartSum * (1 + TaxRate) - cartDiscount),
+        totalTax: (cartSum * Number(TaxRate)),
+        totalPrice: (cartSum * (1 + Number(TaxRate)) - cartDiscount),
         cartDescription: cartDescription
     })
 }
@@ -827,14 +827,14 @@ router.post('/cartData', async (req, res) => {
                     cartDiscount += off
                 else
                     cartDiscount += parseInt(cartItems[i].price)
-                        * Number(cartItems[i].count) * (1 + TaxRate) * off / 100
+                        * Number(cartItems[i].count) * (1 + Number(TaxRate)) * off / 100
             }
         }
         orderData.totalFee = cartPrice
         orderData.totalCount = cartItem
         orderData.totalDiscount = cartDiscount
-        orderData.totalTax = cartPrice * TaxRate
-        orderData.totalPrice = cartPrice * (1 + TaxRate) - cartDiscount
+        orderData.totalTax = cartPrice * Number(TaxRate)
+        orderData.totalPrice = cartPrice * (1 + Number(TaxRate)) - cartDiscount
         res.json({
             cart: cartList && cartList[0],
             cartDetail: orderData
@@ -1632,7 +1632,7 @@ const SepidarFunc = async (data, faktorNo) => {
                     "Fee": toInt(item.price),
                     "Price": normalPriceCount(item.price, item.count, 1),
                     "Discount": findDiscount(item),
-                    "Tax": normalPriceCount(item.price, item.count, TaxRate),
+                    "Tax": normalPriceCount(item.price, item.count, Number(TaxRate)),
                     "Duty": 0.0000,
                     "Addition": 0.0000
                 }))
