@@ -2483,7 +2483,9 @@ const pureCartPrice = (cartItem, payValue) => {
     return cartItems
 }
 router.post('/quote-to-initial', auth, jsonParser, async (req, res) => {
-    const orderNo = req.body.orderNo
+    var orderNo = req.body.orderNo
+    if(!orderNo)
+        orderNo = req.body.OrderNo
 
 
     const cartData = await cart.findOne({ cartNo: orderNo })
