@@ -355,6 +355,7 @@ router.post('/reg-sanad-sepidar', jsonParser, auth, async (req, res) => {
         if(!ReceiptID){
             result.push({
                 error:recieptResult&&recieptResult.Message,
+                message:"ناموفق",
                 query:payQuery,
                 InvoiceID:InvoiceID
             })
