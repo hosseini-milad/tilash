@@ -1067,6 +1067,8 @@ router.post('/update-Item', jsonParser, async (req, res) => {
                     oldCartItems[i].count = data.changes.count
                 if (data.changes.discount)
                     oldCartItems[i].discount = data.changes.discount
+                
+                if (data.changes.price) oldCartItems[i].fixPrice = data.changes.price;
 
 
             }
