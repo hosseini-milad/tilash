@@ -332,7 +332,7 @@ router.post('/reg-sanad-sepidar', jsonParser, auth, async (req, res) => {
     for (var i=0;i<faktorList.length;i++){
         const faktorData = faktorList[i]
         const InvoiceID = faktorData.InvoiceID
-        const bankCode = faktorData.bank?faktorData.bank:"1"
+        const bankCode = faktorData.bank?faktorData.bank:""
         var now = new Date()
         var bDate = faktorData.bankDate?faktorData.bankDate:now.toLocaleDateString('en')
         var payQuery={
@@ -349,7 +349,7 @@ router.post('/reg-sanad-sepidar', jsonParser, auth, async (req, res) => {
                 "Amount": faktorData.NetPrice
             }]
         }
-        var recieptResult = await sepidarPOST(payQuery, "/api/Receipts/BasedOnInvoice", ObjectID(manageId))
+        var recieptResult = bankCode&&await sepidarPOST(payQuery, "/api/Receipts/BasedOnInvoice", ObjectID(manageId))
         
         ReceiptID = recieptResult&&recieptResult.ReceiptID
         if(!ReceiptID){
