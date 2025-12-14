@@ -328,6 +328,8 @@ router.post('/reg-sanad-sepidar', jsonParser, auth, async (req, res) => {
     //const NumberID = req.body.NumberID
     const manageId = req.headers['userid']
     result = []
+    var success = 0
+    var fail = 0
     const faktorList = await faktor.find({ InvoiceID: { $in: InvoiceIDList } })
     for (var i=0;i<faktorList.length;i++){
         const faktorData = faktorList[i]
@@ -353,6 +355,7 @@ router.post('/reg-sanad-sepidar', jsonParser, auth, async (req, res) => {
         
         ReceiptID = recieptResult&&recieptResult.ReceiptID
         if(!ReceiptID){
+            fail ++
             result.push({
                 error:recieptResult&&recieptResult.Message,
                 message:"ناموفق",
@@ -363,6 +366,7 @@ router.post('/reg-sanad-sepidar', jsonParser, auth, async (req, res) => {
             //res.status(400).json({error:recieptResult&&recieptResult.Message,query:recieptQuery})
             //return
         }
+        success++
         await transaction.create({
             userId:manageId,
             sepidarID:ReceiptID,
@@ -385,7 +389,9 @@ router.post('/reg-sanad-sepidar', jsonParser, auth, async (req, res) => {
         })
     }
     
-    res.json({message:"سند سفارش ثبت شد",result:result})
+    res.json({message:"سند سفارش ثبت شد",
+        success,fail,
+        result:result})
 })
 router.post('/reg-sanad-sepidar-old', jsonParser, auth, async (req, res) => {
     const InvoiceID = req.body.InvoiceID
