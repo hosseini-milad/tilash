@@ -340,9 +340,9 @@ router.post('/reg-sanad-sepidar', jsonParser, auth, async (req, res) => {
         bankList = bankArray?bankArray:[]
         var now = new Date()
         var bDate = faktorData.bankDate?faktorData.bankDate:now.toLocaleDateString('en')
-        
+        bankDetail.push(faktorData)
         if(!faktorData.bankArray||faktorData.bankArray == []){
-            bankDetail.push(faktorData.bankArray)
+            
             if(!faktorData.bank){
                 fail ++
             result.push({
