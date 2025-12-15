@@ -362,6 +362,7 @@ router.post('/reg-sanad-sepidar', jsonParser, auth, async (req, res) => {
         }
         for(var c=0;c<bankArray.length;c++){
             var trBank = bankArray[c]
+            bDate = trBank.bankDate?trBank.bankDate:now.toLocaleDateString('en')
             var ReceiptIDs = []
             var payQuery={
                 "GUID": "124ab075-fc79-417f-b8cf-2a"+
@@ -373,7 +374,7 @@ router.post('/reg-sanad-sepidar', jsonParser, auth, async (req, res) => {
                     "BankAccountID": trBank.bank,
                     "Description": "حواله",
                     "Number": faktorData.description?faktorData.description:"000",
-                    "Date":trBank.bankDate,
+                    "Date":bDate,
                     "Amount": trBank.amount?trBank.amount:faktorData.NetPrice
                 }]
             }
