@@ -45,7 +45,7 @@ const CartToSepidar=async(data,faktorNo,user,stock,cartOff,
             "Tax": normalPriceCount(Tax),
             "NetPrice":normalPriceCount(NetPrice),
             "Duty": 0.0000,
-            "Addition": 0.00
+            "Addition": i==0?normalPriceCount(addition):0.00
           })
         }
 
@@ -59,7 +59,7 @@ const CartToSepidar=async(data,faktorNo,user,stock,cartOff,
             "Description":faktorNo,
             "DescriptionRef":faktorNo,
             "Discount": 0.00,
-            "Addition":normalPriceCount(addition),
+            "Addition":0.00,
             "Items": itemsToSepidar,
               totalNetPrice:totalNetPrice,
               totalNetCount:totalNetCount
