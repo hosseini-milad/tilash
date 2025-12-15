@@ -1757,6 +1757,7 @@ router.post('/update-desc', jsonParser, async (req, res) => {
             discount: req.body.discount,
             payValue: req.body.payValue,
             bank:req.body.bank ,
+            bankArray:req.body.bankArray ,
             transport:req.body.transport,
             transportPrice:req.body.transportPrice,
         }

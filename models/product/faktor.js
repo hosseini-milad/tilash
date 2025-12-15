@@ -17,6 +17,7 @@ const FaktorSchema = new Schema({
     InvoiceID:{ type: String},
     InvoiceNumber:{ type: String },
     ReceiptID:String,
+    ReceiptIDs:Array,
     Status:{type:String,default:"unregister"},
     payStatus:{type:String},
     totalCount:{ type: String },
@@ -27,7 +28,8 @@ const FaktorSchema = new Schema({
     transport :{type:String},
     transportPrice :{type:String},
     bank :{type:String},
-    bankDate :{type: Date}
+    bankDate :{type: Date},
+    bankArray:{type:Array},
 });
 
 FaktorSchema.index({ initDate: -1 });
