@@ -330,11 +330,13 @@ router.post('/reg-sanad-sepidar', jsonParser, auth, async (req, res) => {
     result = []
     var success = 0
     var fail = 0
+    var bankList = []
     const faktorList = await faktor.find({ InvoiceID: { $in: InvoiceIDList } })
     for (var i=0;i<faktorList.length;i++){
         const faktorData = faktorList[i]
         const InvoiceID = faktorData.InvoiceID
-        var bankArray = []
+        var bankArray = faktorData.bankArray
+        bankList.push(bankArray)
         var now = new Date()
         var bDate = faktorData.bankDate?faktorData.bankDate:now.toLocaleDateString('en')
         
@@ -415,7 +417,7 @@ router.post('/reg-sanad-sepidar', jsonParser, auth, async (req, res) => {
     }
     
     res.json({message:"سند سفارش ثبت شد",
-        success,fail,
+        success,fail,bankList,
         result:result})
 })
 router.post('/reg-sanad-sepidar-old', jsonParser, auth, async (req, res) => {
