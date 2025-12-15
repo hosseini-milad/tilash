@@ -212,7 +212,7 @@ router.post('/list-product', jsonParser, async (req, res) => {
             if (!matchCondition['$or']) {
                 matchCondition['$or'] = [];
             }
-            var cTitle = title.replace("+","\+")
+            var cTitle = title.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
             matchCondition['$or'].push({ title: new RegExp('.*' + cTitle + '.*') });
             matchCondition['$or'].push({ sku: new RegExp('.*' + cTitle + '.*', 'i') });
         }
