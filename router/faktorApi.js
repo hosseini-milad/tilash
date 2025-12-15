@@ -1656,11 +1656,11 @@ const checkForSalePolicyDependentProductsByAction = async (manageId, cart) => {
 router.post('/update-cart', jsonParser, async (req, res) => {
     try {
         const userId = req.body.userId ;
-        if(!userId){
+        const manageId = req.headers['userid']
+        if(!userId||userId == manageId){
             return res.status(400).json({message:"مشتری انتخاب نشده است"})
         }
 
-        const manageId = req.headers['userid']
         const data = {
             userId,
             manageId: req.headers['userid'],
