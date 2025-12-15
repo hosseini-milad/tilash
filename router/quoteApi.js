@@ -353,185 +353,97 @@ router.post('/update-product', jsonParser, auth, async (req, res) => {
 
 
 router.post('/cart', auth, async (req, res) => {
+    const userId = req.body.userId
     try {
-        const { userId, offset = 0, pageSize = 10, search, dateFrom, dateTo ,isQuote=0} = req.body;
-        const skip = parseInt(offset);
-        const limit = parseInt(pageSize);
-        const canSubmit = 1
-		const cartDetails = await findCartFunction(userId, 
-            req.headers['userid'], limit, skip, 
-            search, dateFrom, dateTo,isQuote);
-        const response = {
-            canSubmit: true,
-            ...cartDetails,
-        };
-        const { needDependency, dependencyCheckResult } = await checkForSalePolicyDependentProductsByAction(req.headers['userid'], cartDetails)
-        response.needDependency = needDependency;
-        response.dependencyCheckResult = dependencyCheckResult;
-		return res.json(response);
-		// return res.json(cartDetails);
-	} catch (error) {
-		return res.status(500).json({ message: error.message });
-	}
+        const cartDetails = await findCartFunction(userId, req.headers['userid'])
+        res.json(cartDetails)
+    }
+    catch (error) {
+        res.status(500).json({ message: error.message })
+    }
 })
-
-
-const findCartFunction = async (userIdRaw, manageId, pageSize = 10, offset = 0, 
-    search, dateFrom = [], dateTo = [],isQuoteTemp=0) => {
-    let isSale;
-    var userId=userIdRaw
+const findCartFunction = async (userId, managerId) => {
+    const isSale = await CheckSale(managerId)
     try {
-        isSale = await CheckSale(manageId);
-        const fromDate = dateFrom[0] ? jMoment(`${dateFrom[0]}-${dateFrom[1]}-${dateFrom[2]}`).toISOString() : '';//jMoment().startOf('day').toISOString();
-        const toDate = dateTo[0] ? jMoment(`${dateTo[0]}-${dateTo[1]}-${dateTo[2]}`).toISOString() : '';//jMoment().endOf('day').toISOString();
-        if (manageId == userId) {
-            userId = '';
-        }
-        const cartDataMatchCondition = {
-            taskStep:{$nin:["cancel"]},
-            manageId,
-        };
-        if(fromDate){
-            cartDataMatchCondition.initDate={ $gte: new Date(fromDate), $lte: new Date(toDate)}
-        }
-        if (userId) {
-            cartDataMatchCondition.userId = userId;
-        }
-        if (search) {
-            cartDataMatchCondition['$or'] = [
-                { 'cartItems.sku': { $regex: search } },
-                { 'cartItems.title': { $regex: search } },
-            ]
-        }
-        //console.log(cartDataMatchCondition)
-        var isQuote = false 
-        if(isQuoteTemp){
-            if(isQuoteTemp =="true") isQuote = true 
-        }
-        const cartDataAggregation = [
-            { $match: isQuoteTemp?(isQuoteTemp =="true"?{isQuote:true}:{isQuote:false}):{}},
-            { $match: cartDataMatchCondition },
-            { $sort: { initDate: -1 } },
-            { $skip: offset },
-            { $limit: pageSize },
-        ];
-        const qCartAdminMatchCondition = {
-            manageId,
-            cartItems: { $ne: [] }, // TODO
-        };
-        const qCartAdminAggregation = [
-            { $match: qCartAdminMatchCondition },
-            { $addFields: { userId: { $toObjectId: '$userId' } } },
+        const cartData = await cart.aggregate([
+            { $match: { manageId: managerId } },
+            { $match: userId ? { userId: userId } : {} },
+            { $match: { result: { $exists: false } } },
+            { $sort: { "initDate": -1 } }
+        ])
+
+        const qCartData = await quoteApi.findOne({ userId: userId ? userId : managerId }).lean()
+        const qCartAdmin = await quoteApi.aggregate([
+            { $match: { manageId: managerId } },
+
+            { $match: { cartItems: { $ne: [] } } },
+
+            { $addFields: { "userId": { "$toObjectId": "$userId" } } },
             {
                 $lookup: {
-                    from: 'customers',
-                    localField: 'userId',
-                    foreignField: '_id',
-                    as: 'userInfo',
-                },
+                    from: "customers",
+                    localField: "userId",
+                    foreignField: "_id",
+                    as: "userInfo"
+                }
             },
-        ];
-        const [cartData, qCartData, qCartAdmin] = await Promise.all([
-            cart.aggregate(cartDataAggregation),
-            qCart.findOne({ userId: userId ? userId : manageId }).lean(),
-            qCart.aggregate(qCartAdminAggregation),
         ])
-        // const cartData = await cart.aggregate(cartDataAggregation);
-        // const qCartData = await qCart.findOne({ userId: userId ? userId : manageId }).lean();
-        // const qCartAdmin = await qCart.aggregate(qCartAdminAggregation);
-        let cartDetail = [];
-        let qCartDetail = '';
-        let description = '';
-        let todayCartData = [];
-        var userData = ''
-        for (let c = 0; c < (cartData && cartData.length); c++) {
-            if (!userId && isSale && IsToday(cartData[c].initDate) !== 1) {
-                // TODO: what is this if for?
-                //continue;
+        //const userData = await customerSchema.findOne({userId:ObjectID(userId)})
+
+        var cartDetail = []
+        var qCartDetail = ''
+        var description = ''
+        var todayCartData = []
+        for (var c = 0; c < (cartData && cartData.length); c++) {
+            if (!userId && IsToday(cartData[c].initDate) !== 1) {
+                continue
             }
             try {
-                for (let j = 0; j < cartData[c].cartItems.length; j++) {
+                for (var j = 0; j < cartData[c].cartItems.length; j++) {
                     try {
-                        const cartTemp = cartData[c].cartItems[j];
-                        const productData = await products.findOne({ sku: cartTemp.sku }).lean();
-                        const cartItemDetail = findCartItemDetail(cartTemp, cartData[c].payValue, cartData[c].discount);
-                        cartData[c].cartItems[j].total = cartItemDetail;
-                        cartData[c].cartItems[j].productData = productData;
-                    } catch {}
+                        var cartTemp = cartData[c].cartItems[j]
+                        const productData = await products.findOne({ sku: cartTemp.sku })
+                        const cartItemDetail = findCartItemDetail(cartTemp, cartData[c].payValue)
+                        cartData[c].cartItems[j].total = cartItemDetail
+                        cartData[c].cartItems[j].productData = productData
+                    }
+                    catch { }
                 }
-                userData = await customers.findOne({ _id: cartData[c].userId }).lean();
-                let official = 1;
-                if (!userData.CustomerID) {
-                    official = 0;
-                }
-                if (userData.cName && userData.cName.includes('مصرف')) {
-                    official = 0;
-                }
-                userData = await customers.findOne({ _id: cartData[c].userId }).lean();
-                var bankData = cartData[c].bank&&
-                await bankAccounts.findOne({ BankAccountID: cartData[c].bank})
-                cartData[c].bankName = bankData&&bankData.DlTitle
-                cartData[c] = { ...cartData[c], official ,userData};
-                todayCartData.push({ ...cartData[c], userData });
-                cartDetail.push(findCartSum(cartData[c].cartItems, 
-                    cartData[c].payValue,cartData[c].transportPrice,
-                    cartData[c].discount));
-            } catch {}
+                const userData = await customers.findOne({ _id: ObjectID(cartData[c].userId) })
+                cartData[c] = { ...cartData[c], userData: userData }
+                cartDetail.push(findCartSum(cartData[c].cartItems))
+            }
+            catch { }
+            todayCartData.push(cartData[c])
+
         }
         if (qCartData) {
-            for (let j = 0; j < qCartData.cartItems.length; j++) {
+            for (var j = 0; j < qCartData.cartItems.length; j++) {
                 try {
-                    const cartTemp = qCartData.cartItems[j];
-                    const productData = await products.findOne({ sku: cartTemp.sku }).lean();
-                    const cartItemDetail = findCartItemDetail(cartTemp, qCartData.payValue, qCartData.discount);
-                    qCartData.cartItems[j].total = cartItemDetail;
-                    qCartData.cartItems[j].productData = productData;
-                } catch {}
-            }
-            qCartDetail = findQuickCartSum(qCartData.cartItems, qCartData.payValue, 
-                qCartData.discount, qCartData.transportPrice);
-        }
+                    var cartTemp = qCartData.cartItems[j]
+                    const productData = await products.findOne({ sku: cartTemp.sku })
 
-        const response = {
-            policy: true,
-            cart: cartData,
-            cartDetail,
-            isSale,
-            size: todayCartData.length,
-            quickCart: qCartData,
-            qCartDetail,
-            qCartAdmin,
-        };
-
-        if (qCartData) {
-            const { isSalePolicyRulesPassed, salePolicyRuleMessage, requiredProducts } = await checkForSalePolicyRules(qCartData, manageId);
-            const { lowSellingProducts1, lowSellingProducts2, sideProducts } = await getCartItemsByPolicyGroup(qCartData);
-            if (!isSalePolicyRulesPassed) {
-                response.policy = false;
-                response.policyRules = {
-                    requiredProducts,
-                    salePolicyRuleMessage,
-                    selectedProducts: {
-                        side: [...lowSellingProducts1, ...lowSellingProducts2],
-                        sub: sideProducts,
-                    },
+                    const cartItemDetail = findCartItemDetail(cartTemp, qCartData.payValue, qCartData.discount)
+                    qCartData.cartItems[j].total = cartItemDetail
+                    qCartData.cartItems[j].productData = productData
                 }
+                catch { }
             }
+            qCartDetail = findQuickCartSum(qCartData.cartItems,
+                qCartData.payValue, qCartData.discount)
         }
-
-        return response;
-    } catch (err) {
-        console.log(err);
-        return {
-            cart: [],
-            cartDetail: [],
-            isSale,
-            quickCart: '',
-            qCartDetail: '',
-        };
+        return ({
+            cart: todayCartData, cartDetail: cartDetail, userData: "userData", isSale,policy:true,
+            quickCart: qCartData, qCartDetail: qCartDetail, qCartAdmin: qCartAdmin,needDependency:false
+        })
     }
-};
-
+    catch {
+        return ({
+            cart: [], cartDetail: [], isSale,
+            quickCart: '', qCartDetail: ''
+        })
+    }
+}
 const findPayValuePrice = (priceArray, payValue) => {
     if (!priceArray) return (0)
     if (!payValue) payValue = 3
@@ -1155,8 +1067,6 @@ router.post('/update-Item', jsonParser, async (req, res) => {
                     oldCartItems[i].count = data.changes.count
                 if (data.changes.discount)
                     oldCartItems[i].discount = data.changes.discount
-                
-                if (data.changes.price) oldCartItems[i].fixPrice = data.changes.price;
 
 
             }
