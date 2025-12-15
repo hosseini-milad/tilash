@@ -12,6 +12,11 @@ router.use(auth);
 const getBrandsController = async (req, res) => {
 	try {
 		const brands = await brandModel.find({}).lean();
+		brands.push({
+            title:"نامشخص",
+            brandCode:"unknown",
+            active:true,
+        })
 		return res.send({ brands });
 	} catch (error) {
 		return res.status(500).json({ message: error.message });
