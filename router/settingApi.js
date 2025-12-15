@@ -374,7 +374,7 @@ router.post('/reg-sanad-sepidar', jsonParser, auth, async (req, res) => {
                     "Description": "حواله",
                     "Number": faktorData.description?faktorData.description:"000",
                     "Date":trBank.bankDate,
-                    "Amount": trBank.amount
+                    "Amount": trBank.amount?trBank.amount:faktorData.NetPrice
                 }]
             }
             var recieptResult = await sepidarPOST(payQuery, "/api/Receipts/BasedOnInvoice", ObjectID(manageId))
