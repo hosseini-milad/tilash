@@ -227,7 +227,7 @@ router.post('/list-product', jsonParser, async (req, res) => {
             matchCondition.active = false;
         }
         if (brandId) {
-            if (brandId === 'unkown') {
+            if (brandId === 'unknown') {
                 if (!matchCondition['$or']) {
                     matchCondition['$or'] = [];
                 }
@@ -332,7 +332,13 @@ router.post('/list-product', jsonParser, async (req, res) => {
 
 		// const productList = newProduct.slice(offset, parseInt(offset) + parseInt(pageSize));
 		// const typeUnique = [...new Set(productList.map((item) => item.brand))];
-		const brandList = await BrandSchema.find();
+		var brandList = await BrandSchema.find().lean();
+        brandList.push({
+            title:"نامشخص",
+            brandCode:"unknown",
+            active:true,
+        })
+
 		const stockList = userData.access == 'manager' ? await Stocks.find({ IsActive: true }).lean() : await Stocks.find({ StockID: { $in: myStock } }).lean();
 		return res.json({
             filter: productList,
