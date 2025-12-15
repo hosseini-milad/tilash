@@ -2352,6 +2352,7 @@ router.post('/quick-to-cart', jsonParser, async (req, res) => {
 			manageId: req.headers['userid'],
 			date,
             transport,transportPrice,
+            bankArray,
             bank,
             bankDate:bDate,
 			progressDate: Date.now(),
