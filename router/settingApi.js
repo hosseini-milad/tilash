@@ -341,7 +341,7 @@ router.post('/reg-sanad-sepidar', jsonParser, auth, async (req, res) => {
         var now = new Date()
         var bDate = faktorData.bankDate?faktorData.bankDate:now.toLocaleDateString('en')
         bankDetail.push(faktorData)
-        if(!faktorData.bankArray||faktorData.bankArray == []){
+        if(!faktorData.bankArray||faktorData.bankArray.length == 0){
             
             if(!faktorData.bank){
                 fail ++
