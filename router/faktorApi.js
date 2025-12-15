@@ -2972,7 +2972,7 @@ router.post('/customer-find', auth, jsonParser, async (req, res) => {
 		const userMatchConditoin = {
 			active: true,
         };
-        if (search) {
+        if (0&&search) {
             userMatchConditoin['$or'] = [
                 { username: { $regex: search, $options: 'i' } },
                 { phone: { $regex: search, $options: 'i' } },
@@ -2992,7 +2992,7 @@ router.post('/customer-find', auth, jsonParser, async (req, res) => {
                         { cName: { $regex: search, $options: 'i' } },
                         { sName: { $regex: search, $options: 'i' } },
                         { mobile: { $regex: search, $options: 'i' } },
-                        { Code: { $regex: search, $options: 'i' } }
+                        { cCode: { $regex: search, $options: 'i' } }
                     ],
                 },
             ];
