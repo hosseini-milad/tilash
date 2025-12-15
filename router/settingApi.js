@@ -369,7 +369,7 @@ router.post('/reg-sanad-sepidar', jsonParser, auth, async (req, res) => {
                     "BankAccountID": trBank.bank,
                     "Description": "حواله",
                     "Number": faktorData.description?faktorData.description:"000",
-                    "Date":trBank.bDate,
+                    "Date":trBank.bankDate,
                     "Amount": trBank.amount
                 }]
             }
@@ -408,10 +408,10 @@ router.post('/reg-sanad-sepidar', jsonParser, auth, async (req, res) => {
                 InvoiceID:InvoiceID
             })
             ReceiptIDs.push(ReceiptID)
+            await faktor.updateOne({InvoiceID:InvoiceID},
+            {$set:{ReceiptID:ReceiptID,ReceiptIDs,Status:"register"}}) 
         }
-        await faktor.updateOne({InvoiceID:InvoiceID},
-            {$set:{ReceiptID:ReceiptID,ReceiptIDs,Status:"register"}}
-        ) 
+        
     }
     
     res.json({message:"سند سفارش ثبت شد",
