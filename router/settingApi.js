@@ -547,10 +547,10 @@ router.post('/list-faktors', auth, async (req, res) => {
 router.post('/edit-faktor', auth, async (req, res) => {
 	try {
         const userId = req.headers['userid'];
-        const { InvoiceID, bankDate,bank } = req.body;
+        const { InvoiceID,bankArray, bankDate,bank } = req.body;
         
         const result = await faktor.updateOne({InvoiceID:InvoiceID},
-            {bankDate,bank}
+            {bankDate,bankArray,bank}
         );
 		
 		return res.json({ data:result });
