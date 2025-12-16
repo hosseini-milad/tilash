@@ -570,8 +570,13 @@ router.get('/list-bank', async (req,res)=>{
 })
 
 router.get('/my-list-bank',auth, async (req,res)=>{
-    const bankList = await bankAccounts.find({ }).lean()
-    
+    var userId = req.user.user_id
+    const adminData = await userModel.findOne({ _id: userId }).lean();
+    const bankList = await bankAccounts.find({ limit: adminData.username }).lean();
+    //const bankList = await bankAccounts.find({ }).lean()
+    for(var i=0;i<bankList.length;i++){
+        bankList[i].DlTitle = bankList[i].DlTitle+" - " + bankList[i].DlCode
+    }
     res.json({data:bankList})
 })
 
