@@ -1954,7 +1954,12 @@ router.post('/update-Item',auth, jsonParser, async (req, res) => {
 				if (data.changes.description) oldCartItems[i].description = data.changes.description;
 				if (data.changes.count) oldCartItems[i].count = data.changes.count;
 				if (data.changes.discount) oldCartItems[i].discount = data.changes.discount;
-                if (data.changes.price) oldCartItems[i].fixPrice = data.changes.price;
+                if (data.changes.price){
+                    oldCartItems[i].fixPrice = data.changes.price;
+                    oldCartItems[i].price.forEach(item => {
+                        item.price = data.changes.price;
+                        });
+                } 
 
 				const availItems = await checkAvailable(oldCartItems[i], manageDetail&&manageDetail.StockId);
 
