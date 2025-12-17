@@ -1121,6 +1121,12 @@ router.post('/update-Item-cart', jsonParser, async (req, res) => {
                     oldCartItems[i].count = data.changes.count
                 if (data.changes.discount)
                     oldCartItems[i].discount = data.changes.discount
+                if (data.changes.price){
+                    oldCartItems[i].fixPrice = data.changes.price;
+                    oldCartItems[i].price.forEach(item => {
+                        item.price = data.changes.price;
+                        });
+                } 
                 //if(data.changes.stock)
                 oldCartItems[i].stock = data.changes.stock
                 oldCartItems[i].total = findCartItemDetail(oldCartItems[i], 
@@ -1130,11 +1136,11 @@ router.post('/update-Item-cart', jsonParser, async (req, res) => {
                     res.status(400).json({ error: "موجودی کافی نیست" })
                     return
                 }*/
-               if (data.changes.price) {
+               if (0&&data.changes.price) {
                     const managerProfile = await profileModel.findOne({ profileCode: 'manager' }).lean();
                     const isManager = await userModel.findOne({ _id: adminId, profile: `${managerProfile._id}` }).lean();
                     if (!isManager) {
-                        return res.status(403).send({ error: 'شما مجاز به تغییر قیمت نیستید.' });
+                        //return res.status(403).send({ error: 'شما مجاز به تغییر قیمت نیستید.' });
                     }
                     // oldCartItems[i].price = changes.newPrice;
                     if (oldCartItems[i]?.price.length) {
