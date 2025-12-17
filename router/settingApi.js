@@ -577,7 +577,7 @@ router.get('/my-list-bank',auth, async (req,res)=>{
     for(var i=0;i<bankList.length;i++){
         bankList[i].DlTitle = bankList[i].DlTitle+" - " + bankList[i].DlCode
     }
-    res.json({data:bankList})
+    res.json({data:bankList,bankData:adminData&&adminData.bank})
 })
 
 router.post('/add-bank-to-cart',auth, async (req,res)=>{
