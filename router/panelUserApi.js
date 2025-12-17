@@ -129,6 +129,7 @@ router.post("/update-user", jsonParser, async (req, res) => {
     password: req.body.password,
     StockId: req.body.StockId,
     StockArr: req.body.StockArr,
+    bank: req.body.bank,
     CustomerID: req.body.CustomerID,
     hasCommission: req.body.hasCommission,
   };

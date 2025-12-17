@@ -2516,12 +2516,7 @@ router.post('/quote-to-initial', auth, jsonParser, async (req, res) => {
     }
 
     try {
-        const result = await tasks.updateOne(
-            { orderNo: orderNo },
-            {
-                $set: { taskStep: 'initial' , isQuote: false }
-            },
-        );
+        
 
         const result2 = await cart.updateOne(
             { cartNo: orderNo },

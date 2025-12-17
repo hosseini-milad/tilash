@@ -21,6 +21,7 @@ const userSchema = new mongoose.Schema({
   profileId: { type: String },
   StockId: { type: String },
   StockArr: { type: Array },
+  bank: { type: Array },
   CustomerID: { type: String },
   default: { type: String },
   branchId : { type: String },
