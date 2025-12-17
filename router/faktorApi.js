@@ -810,8 +810,8 @@ const findCartFunction = async (userIdRaw, manageId, pageSize = 10, offset = 0,
     var userId=userIdRaw
     try {
         isSale = await CheckSale(manageId);
-        const fromDate = dateFrom[0] ? jMoment(`${dateFrom[0]}-${dateFrom[1]}-${dateFrom[2]}`).toISOString() : '';//jMoment().startOf('day').toISOString();
-        const toDate = dateTo[0] ? jMoment(`${dateTo[0]}-${dateTo[1]}-${dateTo[2]}`).toISOString() : '';//jMoment().endOf('day').toISOString();
+        const fromDate = dateFrom[0] ? jMoment(`${dateFrom[0]}-${dateFrom[1]}-${dateFrom[2]}`).startOf('day').toISOString() : '';//jMoment().startOf('day').toISOString();
+        const toDate = dateTo[0] ? jMoment(`${dateTo[0]}-${dateTo[1]}-${dateTo[2]}`).endOf('day').toISOString() : '';//jMoment().endOf('day').toISOString();
         if (manageId == userId) {
             userId = '';
         }
