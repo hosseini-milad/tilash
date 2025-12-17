@@ -30,6 +30,7 @@ const CartSchema = new Schema({
     transport :{type:String},
     transportPrice :{type:String},
     bank :{type:String},
+    bankArray:{type:Array},
     bankDate :{type:Date}
 })
 

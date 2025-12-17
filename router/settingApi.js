@@ -328,63 +328,100 @@ router.post('/reg-sanad-sepidar', jsonParser, auth, async (req, res) => {
     //const NumberID = req.body.NumberID
     const manageId = req.headers['userid']
     result = []
+    var success = 0
+    var fail = 0
+    var bankList = []
+    var bankDetail = []
     const faktorList = await faktor.find({ InvoiceID: { $in: InvoiceIDList } })
     for (var i=0;i<faktorList.length;i++){
         const faktorData = faktorList[i]
         const InvoiceID = faktorData.InvoiceID
-        const bankCode = faktorData.bank?faktorData.bank:"1"
+        var bankArray = faktorData.bankArray
+        bankList = bankArray?bankArray:[]
         var now = new Date()
         var bDate = faktorData.bankDate?faktorData.bankDate:now.toLocaleDateString('en')
-        var payQuery={
-            "GUID": "124ab075-fc79-417f-b8cf-2a"+
-                (Math.floor(Math.random()*9000000000) + 1000000000),
-            "InvoiceID": InvoiceID,
-            "Description": faktorData.InvoiceNumber,
-            "Date":bDate,
-            "Drafts": [{
-                "BankAccountID": bankCode,
-                "Description": "حواله",
-                "Number": faktorData.description?faktorData.description:"000",
-                "Date":bDate,
-                "Amount": faktorData.NetPrice
-            }]
-        }
-        var recieptResult = await sepidarPOST(payQuery, "/api/Receipts/BasedOnInvoice", ObjectID(manageId))
-        
-        ReceiptID = recieptResult&&recieptResult.ReceiptID
-        if(!ReceiptID){
+        bankDetail.push(faktorData)
+        if(!faktorData.bankArray||faktorData.bankArray.length == 0){
+            
+            if(!faktorData.bank){
+                fail ++
             result.push({
-                error:recieptResult&&recieptResult.Message,
-                query:payQuery,
+                error:"کد بانک وارد نشده است",
+                message:"ناموفق",
+                query:"",
                 InvoiceID:InvoiceID
             })
             continue
-            //res.status(400).json({error:recieptResult&&recieptResult.Message,query:recieptQuery})
-            //return
+            }
+
+            bankArray.push({
+                bank:faktorData.bank,
+                bankDate:bDate,
+                amount:faktorData.NetPrice
+            })
         }
-        await transaction.create({
-            userId:manageId,
-            sepidarID:ReceiptID,
-            InvoiceID:InvoiceID,
-            sepidarResult:recieptResult,
-            bankCode:bankCode,
-            faktorNo:faktorData.faktorNo,
-            orderNo:faktorData.Number,
-            payStatus:"done",
-            payValue:faktorData.NetPrice}
-        )
-        await faktor.updateOne({InvoiceID:InvoiceID},
-            {$set:{ReceiptID:ReceiptID,Status:"register"}}
-        ) 
-        result.push({
-            error:'',
-            result:ReceiptID,
-            query:payQuery,
-            InvoiceID:InvoiceID
-        })
+        for(var c=0;c<bankArray.length;c++){
+            var trBank = bankArray[c]
+            bDate = trBank.bankDate?trBank.bankDate:now.toLocaleDateString('en')
+            var ReceiptIDs = []
+            var payQuery={
+                "GUID": "124ab075-fc79-417f-b8cf-2a"+
+                    (Math.floor(Math.random()*9000000000) + 1000000000),
+                "InvoiceID": InvoiceID,
+                "Description": faktorData.InvoiceNumber,
+                "Date":bDate,
+                "Drafts": [{
+                    "BankAccountID": trBank.bank,
+                    "Description": "حواله",
+                    "Number": faktorData.description?faktorData.description:"000",
+                    "Date":bDate,
+                    "Amount": trBank.amount?trBank.amount:faktorData.NetPrice
+                }]
+            }
+            var recieptResult = await sepidarPOST(payQuery, "/api/Receipts/BasedOnInvoice", ObjectID(manageId))
+            
+            var ReceiptID = recieptResult&&recieptResult.ReceiptID
+            if(!ReceiptID){
+                fail ++
+                result.push({
+                    error:recieptResult&&recieptResult.Message,
+                    message:"ناموفق",
+                    query:payQuery,
+                    InvoiceID:InvoiceID
+                })
+                continue
+                //res.status(400).json({error:recieptResult&&recieptResult.Message,query:recieptQuery})
+                //return
+            }
+            success++
+            await transaction.create({
+                userId:manageId,
+                sepidarID:ReceiptID,
+                InvoiceID:InvoiceID,
+                sepidarResult:recieptResult,
+                bankCode:trBank.bank,
+                faktorNo:faktorData.faktorNo,
+                orderNo:faktorData.Number,
+                payStatus:"done",
+                date:trBank.bankDate,
+                payValue:trBank.amount}
+            )
+            result.push({
+                error:'',
+                result:ReceiptID,
+                query:payQuery,
+                InvoiceID:InvoiceID
+            })
+            ReceiptIDs.push(ReceiptID)
+            await faktor.updateOne({InvoiceID:InvoiceID},
+            {$set:{ReceiptID:ReceiptID,ReceiptIDs,Status:"register"}}) 
+        }
+        
     }
     
-    res.json({message:"سند سفارش ثبت شد",result:result})
+    res.json({message:"سند سفارش ثبت شد",
+        success,fail,bankList,bankDetail,
+        result:result})
 })
 router.post('/reg-sanad-sepidar-old', jsonParser, auth, async (req, res) => {
     const InvoiceID = req.body.InvoiceID
@@ -496,10 +533,10 @@ router.post('/list-faktors', auth, async (req, res) => {
 		const size = aggregationResult?.totalSize[0]?.totalSize || 0;
 		const filter = aggregationResult?.result || [];
         for(var i = 0;i<filter.length;i++){
-            var cartData = filter[0]
+            var cartData = filter[i]
             var bankData = cartData.bank&&
             await bankAccounts.findOne({ BankAccountID: cartData.bank})
-            filter[0].bankName = bankData&&bankData.DlTitle
+            filter[i].bankName = bankData&&bankData.DlTitle
         }
 		const bankList = await bankAccounts.find({ limit: adminData.username }).lean();
 		return res.json({ filter, tabs, size, bankList });
@@ -510,10 +547,10 @@ router.post('/list-faktors', auth, async (req, res) => {
 router.post('/edit-faktor', auth, async (req, res) => {
 	try {
         const userId = req.headers['userid'];
-        const { InvoiceID, bankDate,bank } = req.body;
+        const { InvoiceID,bankArray, bankDate,bank } = req.body;
         
         const result = await faktor.updateOne({InvoiceID:InvoiceID},
-            {bankDate,bank}
+            {bankDate,bankArray,bank}
         );
 		
 		return res.json({ data:result });
@@ -533,8 +570,13 @@ router.get('/list-bank', async (req,res)=>{
 })
 
 router.get('/my-list-bank',auth, async (req,res)=>{
-    const bankList = await bankAccounts.find({ }).lean()
-    
+    var userId = req.user.user_id
+    const adminData = await userModel.findOne({ _id: userId }).lean();
+    const bankList = await bankAccounts.find({ limit: adminData.username }).lean();
+    //const bankList = await bankAccounts.find({ }).lean()
+    for(var i=0;i<bankList.length;i++){
+        bankList[i].DlTitle = bankList[i].DlTitle+" - " + bankList[i].DlCode
+    }
     res.json({data:bankList})
 })
 

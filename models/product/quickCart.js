@@ -14,6 +14,7 @@ const QCartSchema = new Schema({
     discount:{type:String},
     
     bank:{type:String},
+    bankArray:{type:Array},
     transport:{type:String},
     transportPrice:{type:String},
 

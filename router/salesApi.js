@@ -35,9 +35,11 @@ router.post('/find-products', auth, async (req, res) => {
             sku: { $exists: true },
         };
         if (search) {
+            
+            var cTitle = search.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
             productsMatchCondition['$or'] = [
-                { sku: { $regex: search, $options: 'i' } },
-                { title: { $regex: search, $options: 'i' } },
+                { sku: { $regex: cTitle, $options: 'i' } },
+                { title: { $regex: cTitle, $options: 'i' } },
             ];
         }
         if (brand) {

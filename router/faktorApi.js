@@ -1655,8 +1655,12 @@ const checkForSalePolicyDependentProductsByAction = async (manageId, cart) => {
 
 router.post('/update-cart', jsonParser, async (req, res) => {
     try {
-        const userId = req.body.userId ? req.body.userId : req.headers['userid'];
+        const userId = req.body.userId ;
         const manageId = req.headers['userid']
+        if(!userId||userId == manageId){
+            return res.status(400).json({message:"مشتری انتخاب نشده است"})
+        }
+
         const data = {
             userId,
             manageId: req.headers['userid'],
@@ -1757,6 +1761,7 @@ router.post('/update-desc', jsonParser, async (req, res) => {
             discount: req.body.discount,
             payValue: req.body.payValue,
             bank:req.body.bank ,
+            bankArray:req.body.bankArray ,
             transport:req.body.transport,
             transportPrice:req.body.transportPrice,
         }
@@ -1949,7 +1954,12 @@ router.post('/update-Item',auth, jsonParser, async (req, res) => {
 				if (data.changes.description) oldCartItems[i].description = data.changes.description;
 				if (data.changes.count) oldCartItems[i].count = data.changes.count;
 				if (data.changes.discount) oldCartItems[i].discount = data.changes.discount;
-                if (data.changes.price) oldCartItems[i].fixPrice = data.changes.price;
+                if (data.changes.price){
+                    oldCartItems[i].fixPrice = data.changes.price;
+                    oldCartItems[i].price.forEach(item => {
+                        item.price = data.changes.price;
+                        });
+                } 
 
 				const availItems = await checkAvailable(oldCartItems[i], manageDetail&&manageDetail.StockId);
 
@@ -2338,7 +2348,7 @@ const checkForSalePolicyRules = async (qCartData, manageId) => {
 router.post('/quick-to-cart', jsonParser, async (req, res) => {
 	try {
 		const userId = req.body.userId ? req.body.userId : req.headers['userid'];
-		const { branchName, branchId, date,  transport ,
+		const { branchName, branchId, date,  transport ,bankArray,
                 transportPrice,bank,bankDate,cartID, isQuote } = req.body;
         var now = new Date()
         var bDate = bankDate?bankDate:now.toLocaleDateString('en')
@@ -2347,6 +2357,7 @@ router.post('/quick-to-cart', jsonParser, async (req, res) => {
 			manageId: req.headers['userid'],
 			date,
             transport,transportPrice,
+            bankArray,
             bank,
             bankDate:bDate,
 			progressDate: Date.now(),
@@ -2385,6 +2396,7 @@ router.post('/quick-to-cart', jsonParser, async (req, res) => {
 		const quickCartItems = qCartData && qCartData.cartItems;
 		data.cartItems = quickCartItems;
         data.bank = data.bank?data.bank:(qCartData && qCartData.bank);
+        data.bankArray = qCartData && qCartData.bankArray
         data.transport = data.transport?data.transport:(qCartData && qCartData.transport);
         data.transportPrice = data.transportPrice?data.transportPrice:(qCartData && qCartData.transportPrice);
 		const stockId = adminData.StockId ? adminData.StockId : '5';
@@ -2962,7 +2974,7 @@ router.post('/customer-find', auth, jsonParser, async (req, res) => {
 		const userMatchConditoin = {
 			active: true,
         };
-        if (search) {
+        if (0&&search) {
             userMatchConditoin['$or'] = [
                 { username: { $regex: search, $options: 'i' } },
                 { phone: { $regex: search, $options: 'i' } },
@@ -2982,7 +2994,7 @@ router.post('/customer-find', auth, jsonParser, async (req, res) => {
                         { cName: { $regex: search, $options: 'i' } },
                         { sName: { $regex: search, $options: 'i' } },
                         { mobile: { $regex: search, $options: 'i' } },
-                        { Code: { $regex: search, $options: 'i' } }
+                        { cCode: { $regex: search, $options: 'i' } }
                     ],
                 },
             ];
