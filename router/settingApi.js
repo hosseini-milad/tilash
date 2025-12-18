@@ -452,7 +452,7 @@ router.post('/reg-sanad-sepidar-old', jsonParser, auth, async (req, res) => {
 })
 router.post('/list-faktors', auth, async (req, res) => {
 	try {
-        const userId = req.headers['userid'];
+        const userId = req.headers['userid']; 
         const { dateFrom = [], dateTo = [], offset = 0, pageSize = 10, manager, customer, type, payValue, orderNo, status, description } = req.body;
         const fromDate = utils.helper.getFromDate(dateFrom);
 		const toDate = utils.helper.getToDate(dateTo);
@@ -460,9 +460,17 @@ router.post('/list-faktors', auth, async (req, res) => {
         const limit = parseInt(pageSize);
         const adminData = await userModel.findOne({ _id: userId }).lean();
         if (!adminData) {
-            return res.status(400).json({ error: 'کاربر معتبر نیست.' });
+            res.status(400).json({ error: "کاربر معتبر نیست" });
+            return;
         }
-        const userList = await userModel.find()
+        var clientList=[]
+        if(adminData.access=="admin"){
+            var userList = await userModel.find(
+                {profile:{$in:adminData.profile},access:{$nin:["manager","admin"]}})//{StockId:userData.StockId})
+            clientList=(userList.map(item=>item._id.toString()))
+        }
+        clientList.push(adminData._id.toString())
+        //const userList = await userModel.find()
         var managerTabs = [
 			{ title: 'ویزیتور', type: 'Visitor', manager: 'visitor' },
         ]
@@ -492,7 +500,8 @@ router.post('/list-faktors', auth, async (req, res) => {
                 }
             }
         } else {
-            matchCondition.manageId = userId;
+            //{ $match: { manageId: {$in:clientList}}},
+            matchCondition.manageId = {$in:clientList}//userId;
         }
         if (status) {
             matchCondition.Status = status;

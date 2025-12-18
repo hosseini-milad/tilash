@@ -46,6 +46,8 @@ const cartModel = require('../models/product/cart');
 const profileModel = require('../models/auth/ProfileAccess');
 const customerModel = require('../models/auth/customers');
 const FindFaktor = require('../middleware/NewModule/FindFaktor');
+const FindQuick = require('../middleware/NewModule/FindQuick');
+const CartDiscountToItems = require('../middleware/NewModule/CartDiscountToItems');
 const { TaxRate } = process.env
 
 const commaSeparatedPrices = (number) => {
@@ -1756,9 +1758,10 @@ router.post('/update-desc', jsonParser, async (req, res) => {
     try {
         const userId = req.body.userId ? req.body.userId : req.headers['userid']
         const cartNo = req.body.cartNo
+        var dataQuick={}
         const data = {
             description: req.body.description,
-            discount: req.body.discount,
+            pDiscount: req.body.discount,
             payValue: req.body.payValue,
             bank:req.body.bank ,
             bankArray:req.body.bankArray ,
@@ -1768,7 +1771,21 @@ router.post('/update-desc', jsonParser, async (req, res) => {
         if (cartNo) {
             await cart.updateOne({ cartNo }, { ...data });
         } else {
+            var discRate = 0
+            dataQuick = await FindQuick(userId);
+            var disPercent = 0
+            var cartDiscount = req.body.discount
+            if(cartDiscount){
+                var qCartData = dataQuick&&dataQuick.qCartData
+                var qCartDetail = dataQuick&&dataQuick.qCartDetail
+                var totalPrice = qCartDetail&&qCartDetail.totalPrice
+                await CartDiscountToItems(userId,qCartData&&qCartData.cartItems,
+                    cartDiscount,totalPrice,qCartData&&qCartData.pDiscount
+                )
+            }
             await quickCart.updateOne({ userId }, { ...data });
+
+            //return res.json({...dataQuick,disPercent})
         }
 
         const cartDetails = cartNo
@@ -1777,7 +1794,7 @@ router.post('/update-desc', jsonParser, async (req, res) => {
 
         // return res.json({ ...cartDetails,canEdit:1, message: 'سبد بروز شد.' })
         const response = {
-            ...cartDetails,
+            ...cartDetails,dataQuick,
             message: 'سبد بروز شد.',
             canEdit: 1,
         };

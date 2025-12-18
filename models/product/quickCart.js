@@ -12,6 +12,7 @@ const QCartSchema = new Schema({
     stockId:{type:String},
     description:{type:String},
     discount:{type:String},
+    pDiscount:{type:String},
     
     bank:{type:String},
     bankArray:{type:Array},

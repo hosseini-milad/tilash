@@ -80,13 +80,13 @@ router.use('/web/product', require('./Web/productApi'));
 
 schedule.scheduleJob('5 */2 * * *', async () => {
     response = await fetch(ONLINE_URL + "/sepidar-product",
-        { method: 'GET' });
+        { method: 'POST' });
     response = await fetch(ONLINE_URL + "/sepidar-price",
-        { method: 'GET' });
+        { method: 'POST' });
     response = await fetch(ONLINE_URL + "/sepidar-quantity",
-        { method: 'GET' });
+        { method: 'POST' });
     response = await fetch(ONLINE_URL + "/sepidar-customer",
-        { method: 'GET' });
+        { method: 'POST' });
 })
 schedule.scheduleJob('00 00 12 * * 0-6', async () => {
     response = await fetch(ONLINE_URL + "/delete-quick",
