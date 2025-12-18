@@ -1,5 +1,5 @@
 const { TaxRate } = process.env
-const findQuickCartSum=async(cartItems, payValue, discount ,transportPrice) => {
+const findQCartSum=async(cartItems, payValue, discount ,transportPrice) => {
     if (!cartItems) return ({ totalPrice: 0, totalCount: 0 })
     var cartSum = 0;
     var cartCount = 0;
@@ -64,4 +64,4 @@ const findQuickCartSum=async(cartItems, payValue, discount ,transportPrice) => {
         cartDescription: cartDescription
     })
 }
-module.exports =findQuickCartSum
+module.exports =findQCartSum

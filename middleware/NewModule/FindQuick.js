@@ -1,6 +1,6 @@
 const qCart = require("../../models/product/quickCart");
 const products = require("../../models/product/products");
-const findQuickCartSum = require("./FindQuickCartSum");
+const findQCartSum = require("./FindQuickCartSum");
 const findCartItemDetail = require("./FindQuickItem");
 
 const FindQuick=async(userId,noDiscount)=>{
@@ -17,7 +17,7 @@ const FindQuick=async(userId,noDiscount)=>{
 					qCartData.cartItems[j].productData = productData;
 				} catch {}
 			}
-			qCartDetail = await findQuickCartSum(qCartData.cartItems, qCartData.payValue, 
+			qCartDetail = await findQCartSum(qCartData.cartItems, qCartData.payValue, 
                 qCartData.discount, qCartData.transportPrice);
                 
             return({qCartDetail,qCartData})
