@@ -1,6 +1,6 @@
 const qCart = require("../../models/product/quickCart");
 const products = require("../../models/product/products");
-const findQuickCartSum = require("./findQuickCartSum");
+const findQuickCartSum = require("./FindQuickCartSum");
 const findCartItemDetail = require("./FindQuickItem");
 
 const FindQuick=async(userId,noDiscount)=>{
