@@ -22,7 +22,7 @@ const CartToSepidar=async(data,faktorNo,user,stock,cartOff,
           //console.log("sku: ",item.sku," discount: ",itemDiscount," fee: ",fee)
           const Price = normalPriceCount(fee,item.count,1)
           const itemDiscount = MultiplySum(item.discount,totalOff,1)
-          const Discount =itemDiscount?(normalPriceCount(Price,itemDiscount)/100):0
+          const Discount =itemDiscount?itemDiscount:0
           totalNetCount += parseInt(item.count)
           //const Discount = discount?normalPriceCount(discount,item.count):0.0000
           const Tax = normalPriceCount(Price-Discount,1,TaxRate)
@@ -41,7 +41,7 @@ const CartToSepidar=async(data,faktorNo,user,stock,cartOff,
             "Quantity": toInt(item.count),
             "Fee": toInt(fee),
             "Price": normalPriceCount(Price),
-            "Discount": normalPriceCount(Discount),
+            "Discount": i==0?normalPriceCount(Discount):0,
             "Tax": normalPriceCount(Tax),
             "NetPrice":normalPriceCount(NetPrice),
             "Duty": 0.0000,
