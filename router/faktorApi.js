@@ -2540,7 +2540,7 @@ router.post('/quote-to-initial', auth, jsonParser, async (req, res) => {
         }
     }
     if (availItems.length != 0) {
-        res.status(500).json({ error: availItems });
+        res.status(400).json({ error: availItems });
         return
     }
 
