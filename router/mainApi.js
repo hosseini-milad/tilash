@@ -88,6 +88,10 @@ schedule.scheduleJob('5 */2 * * *', async () => {
     response = await fetch(ONLINE_URL + "/sepidar-customer",
         { method: 'POST' });
 })
+schedule.scheduleJob('*/10 * * * *', async () => {
+    response = await fetch(ONLINE_URL + "/sepidar-quantity",
+        { method: 'POST' });
+})
 schedule.scheduleJob('00 00 12 * * 0-6', async () => {
     response = await fetch(ONLINE_URL + "/delete-quick",
         { method: 'GET' });
