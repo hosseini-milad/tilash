@@ -229,7 +229,7 @@ router.post('/multi-sepidar', jsonParser, auth, async (req, res) => {
         }
         
         res.json({ data: "sepidarResult",query,result,
-            message: error?'':"سفارشات در سپیدار ثبت شد" })
+            message: error?error:"سفارشات در سپیدار ثبت شد" })
     }
     catch (error) {
         res.status(500).json({ error: error.message })
