@@ -2087,7 +2087,26 @@ router.post('/update-Item-cart', jsonParser, async (req, res) => {
 		return res.status(500).json({ message: error.message });
 	}
 });
-
+router.post('/change-cart-user', auth,jsonParser, async (req, res) => {
+    try {
+        const adminId = req.headers['userid'];
+        const { userId, cartNo } = req.body;
+		const CartData = await cart.findOne({ cartNo }).lean();
+        if(!CartData){
+            return res.status(400).json({error:"سفارش پیدا نشد"})
+        }
+        if(CartData.InvoiceID){
+            return res.status(400).json({error:"سفارش در سپیدار ثبت شده است"})
+        }
+        if(userId != CartData.userId){
+            await cart.updateOne({ cartNo }, { $set: { userId: userId } });
+        }
+		
+		return res.json({  message: 'مشتری سفارش بروز شد.' });
+	} catch (error) {
+		return res.status(500).json({ message: error.message });
+	}
+});
 router.post('/remove-cart', jsonParser, async (req, res) => {
     try {
 		const data = {
