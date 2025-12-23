@@ -1114,10 +1114,10 @@ router.post('/update-Item-cart', jsonParser, async (req, res) => {
         if(!CartData){
             return res.status(400).json({error:"سفارش پیدا نشد"})
         }
-        if(data.newUserId != CartData.userId){
+        /*if(data.newUserId != CartData.userId){
             await cart.updateOne({ cartNo: data.cartNo }, 
-                { $set: { userId: newUserId } });
-        }
+                { $set: { userId: data.newUserId } });
+        }*/
         var oldCartItems = CartData.cartItems
         var manId = await users.findOne({ _id: CartData.manageId }).lean();
         for (var i = 0; i < oldCartItems.length; i++) {
