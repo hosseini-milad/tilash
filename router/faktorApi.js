@@ -2532,15 +2532,17 @@ router.post('/quote-to-initial', auth, jsonParser, async (req, res) => {
 
     // const availItems = await checkCart(cartItems, stockId)
     let availItems = []
+    let error = ''
     for (let i = 0; i < cartItems.length; i++) {
         const result = await checkAvailable(cartItems[i], stockId)
 
         if (!result) {
             availItems.push({ error: "موجودی کالا کافی نمیباشد", sku: cartItems[i].sku })
+            error = `موجودی کالا کافی نمیباشد -  شناسه ${cartItems[i].sku}`
         }
     }
     if (availItems.length != 0) {
-        res.status(400).json({ error: availItems });
+        res.status(500).json({ error: error, errorArr :availItems });
         return
     }
 

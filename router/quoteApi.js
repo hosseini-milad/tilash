@@ -1182,7 +1182,8 @@ router.post('/update-Item-cart', jsonParser, async (req, res) => {
         var taskData = await OrderToTask(data.cartNo)
         if (taskData && (
             taskData.taskStep == "initial" || taskData.taskStep == "edit" || taskData.taskStep == "quote"))
-            canEdit = 1
+            canEdit = 1 
+        if(!CartData.InvoiceID) canEdit = 1
         res.json({ ...cartDetails, message: "آیتم بروز شد.", canEdit })
     }
     catch (error) {

@@ -426,6 +426,7 @@ router.post('/list-client',auth, jsonParser, async (req, res) => { // TODO: chec
         clientList.push(adminData._id.toString())
             var showCart = [];
             const cartList = await carts.aggregate([
+				{ $match: {taskStep:{$nin:["cancel"]}}},
 				{ $match: data.isQuote?{isQuote:true}:{isQuote:false}},
                 { $addFields: { "userId": { "$toObjectId": "$userId" } } },
                 {
