@@ -2019,6 +2019,12 @@ router.post('/update-Item-cart', jsonParser, async (req, res) => {
 		let status = '';
 		//const cartData = await cart.find({userId})
 		const CartData = await cart.findOne({ cartNo }).lean();
+        if(!CartData){
+            return res.status(400).json({error:"سفارش پیدا نشد"})
+        }
+        if(userId != CartData.userId){
+            await cart.updateOne({ cartNo }, { $set: { userId: userId } });
+        }
 		let oldCartItems;
         if(changes && changes.count){
             var rCount = Number(changes.count)
