@@ -817,9 +817,19 @@ const findCartFunction = async (userIdRaw, manageId, pageSize = 10, offset = 0,
         if (manageId == userId) {
             userId = '';
         }
+        /*var clientList=[]
+        const adminData = await users.findOne({ _id: new ObjectId(manageId) });
+
+        if(adminData.access=="admin"){
+            var userList = await users.find(
+                {profile:{$in:adminData.profile},access:{$nin:["manager","admin"]}})//{StockId:userData.StockId})
+            clientList=(userList.map(item=>item._id.toString()))
+        }
+        clientList.push(adminData._id.toString())*/
 		const cartDataMatchCondition = {
             taskStep:{$nin:["cancel"]},
-			manageId,
+            //manageId: {$in:clientList}},
+			manageId, 
 		};
         if(fromDate){
             cartDataMatchCondition.initDate={ $gte: new Date(fromDate), $lte: new Date(toDate)}
