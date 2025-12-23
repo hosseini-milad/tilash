@@ -2009,7 +2009,7 @@ router.post('/update-Item',auth, jsonParser, async (req, res) => {
 router.post('/update-Item-cart', jsonParser, async (req, res) => {
     try {
         const adminId = req.headers['userid'];
-        const { userId, cartID: ItemID, cartNo, changes } = req.body;
+        const { newUserId, cartID: ItemID, cartNo, changes } = req.body;
         const data = {
             cartID: ItemID,
             changes,
@@ -2022,8 +2022,8 @@ router.post('/update-Item-cart', jsonParser, async (req, res) => {
         if(!CartData){
             return res.status(400).json({error:"سفارش پیدا نشد"})
         }
-        if(userId != CartData.userId){
-            await cart.updateOne({ cartNo }, { $set: { userId: userId } });
+        if(newUserId != CartData.userId){
+            await cart.updateOne({ cartNo }, { $set: { userId: newUserId } });
         }
 		let oldCartItems;
         if(changes && changes.count){
