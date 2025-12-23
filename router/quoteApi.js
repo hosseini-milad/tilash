@@ -1100,6 +1100,7 @@ router.post('/update-Item', jsonParser, async (req, res) => {
 })
 router.post('/update-Item-cart', jsonParser, async (req, res) => {
     const data = {
+        newUserId: req.body.newUserId,
         cartID: req.body.cartID,
         changes: req.body.changes,
         cartNo: req.body.cartNo,
@@ -1110,6 +1111,13 @@ router.post('/update-Item-cart', jsonParser, async (req, res) => {
         var status = "";
         //const cartData = await cart.find({userId:data.userId})
         const CartData = await cart.findOne({ cartNo: data.cartNo }).lean();
+        if(!CartData){
+            return res.status(400).json({error:"سفارش پیدا نشد"})
+        }
+        if(newUserId != CartData.userId){
+            await cart.updateOne({ cartNo: data.cartNo }, 
+                { $set: { userId: newUserId } });
+        }
         var oldCartItems = CartData.cartItems
         var manId = await users.findOne({ _id: CartData.manageId }).lean();
         for (var i = 0; i < oldCartItems.length; i++) {
