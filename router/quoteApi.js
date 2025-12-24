@@ -782,7 +782,7 @@ router.post('/canSubmitOrderForCustomer', jsonParser, auth, async (req, res) => 
 
 router.post('/cart', jsonParser, auth, async (req, res) => {
     try {
-        const { userId, offset = 0, pageSize = 10, search, dateFrom, dateTo ,isQuote=0} = req.body;
+        const { userId, offset = 0, pageSize = 10, search, dateFrom, dateTo ,isQuote=1} = req.body;
         const skip = parseInt(offset);
         const limit = parseInt(pageSize);
         const canSubmit = userId?await checkIfCanSubmitOrderForThisCustomer(req.headers['userid'], userId):1;
@@ -807,7 +807,7 @@ router.post('/cart', jsonParser, auth, async (req, res) => {
 });
 
 const findCartFunction = async (userIdRaw, manageId, pageSize = 10, offset = 0, 
-    search, dateFrom = [], dateTo = [],isQuoteTemp=0) => {
+    search, dateFrom = [], dateTo = [],isQuoteTemp="true") => {
     let isSale;
     var userId=userIdRaw
     try {
