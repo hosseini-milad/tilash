@@ -2585,7 +2585,7 @@ router.post('/quote-to-initial', auth, jsonParser, async (req, res) => {
         const result2 = await cart.updateOne(
             { cartNo: orderNo },
             {
-                $set: { isQuote: false }
+                $set: { isQuote: false ,initDate:new Date.now()}
             },
         );
 
