@@ -372,10 +372,18 @@ const findCartFunction = async (userId, managerId) => {
             { $match: { result: { $exists: false } } },
             { $sort: { "initDate": -1 } }
         ])
+        var clientList=[]
+        const adminData = await users.findOne({ _id: new ObjectId(manageId) });
 
+        if(adminData.access=="admin"){
+            var userList = await users.find(
+                {profile:{$in:adminData.profile}})//{StockId:userData.StockId})
+            clientList=(userList.map(item=>item._id.toString()))
+        }
+        clientList.push(adminData._id.toString())
         const qCartData = await quoteApi.findOne({ userId: userId ? userId : managerId }).lean()
         const qCartAdmin = await quoteApi.aggregate([
-            { $match: { manageId: managerId } },
+            { $match: { manageId: {$in:clientList} } },
 
             { $match: { cartItems: { $ne: [] } } },
 

@@ -817,19 +817,19 @@ const findCartFunction = async (userIdRaw, manageId, pageSize = 10, offset = 0,
         if (manageId == userId) {
             userId = '';
         }
-        /*var clientList=[]
+        var clientList=[]
         const adminData = await users.findOne({ _id: new ObjectId(manageId) });
 
         if(adminData.access=="admin"){
             var userList = await users.find(
-                {profile:{$in:adminData.profile},access:{$nin:["manager","admin"]}})//{StockId:userData.StockId})
+                {profile:{$in:adminData.profile}})//{StockId:userData.StockId})
             clientList=(userList.map(item=>item._id.toString()))
         }
-        clientList.push(adminData._id.toString())*/
+        clientList.push(adminData._id.toString())
 		const cartDataMatchCondition = {
             taskStep:{$nin:["cancel"]},
-            //manageId: {$in:clientList}},
-			manageId, 
+            manageId: {$in:clientList}
+			//manageId, 
 		};
         if(fromDate){
             cartDataMatchCondition.initDate={ $gte: new Date(fromDate), $lte: new Date(toDate)}
@@ -3017,7 +3017,7 @@ const compareCount = (count1, count2) => {
 
 router.post('/customer-find', auth, jsonParser, async (req, res) => {
 	try {
-		const { search = '' } = req.body;
+		const { search = '', code="", phone="",username=""} = req.body;
         const userId = req.headers["userid"];
         const theseProfilesShouldSeeTheirCustomers = ['marketadmin', 'market', 'innerSale'];
         const targetProfiles = await profileModel.find({ profileCode: { $in: theseProfilesShouldSeeTheirCustomers } }).lean();
@@ -3039,6 +3039,24 @@ router.post('/customer-find', auth, jsonParser, async (req, res) => {
 		const customerMatchCondition = {
 			active: true,
 		};
+        if(username){
+            customerMatchCondition['$and'] = [
+                {
+                    $or: [
+                        { username: { $regex: username, $options: 'i' } },
+                        { cName: { $regex: username, $options: 'i' } },
+                        { sName: { $regex: username, $options: 'i' } },
+                    ]
+                }
+                
+            ]
+        }
+        if(phone){
+            customerMatchCondition.phone= { $regex: phone, $options: 'i' } 
+        }
+        if(code){
+            customerMatchCondition.cCode= { $regex: code, $options: 'i' }  
+        }
         if (search) {
             customerMatchCondition['$and'] = [
                 {
