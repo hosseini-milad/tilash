@@ -1441,6 +1441,7 @@ router.post('/cart-find', jsonParser, async (req, res) => {
                     var singleCount = count - boxCount*perBox
                     cartList[0].cartItems[i].boxCount=boxCount
                     cartList[0].cartItems[i].singleCount=singleCount
+                    cartList[0].discount = cartList[0].pDiscount
                     }
                 }
                 catch { }
@@ -3362,7 +3363,7 @@ router.post('/public-cart-find', async (req, res) => {
         }
 
         var orderData = findQuickCartSum(cartItems, cartData.payValue, 
-            cartData.discount,cartData.transportPrice);
+            cartData.pDiscount,cartData.transportPrice);
 
         res.json({ cart: cartList, orderData: orderData, canEdit, taskData });
     } catch (error) {
