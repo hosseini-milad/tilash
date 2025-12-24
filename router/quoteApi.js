@@ -1791,8 +1791,8 @@ router.post('/update-desc', jsonParser, async (req, res) => {
                     cartDiscount,totalPrice,qCartData&&qCartData.pDiscount,1
                 )
             }
-            await quickCart.updateOne({ userId }, { ...data });
-
+            const result = await quickCart.updateOne({ userId }, { ...data });
+            console.log(result)
             //return res.json({...dataQuick,disPercent})
         }
 
