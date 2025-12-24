@@ -1791,9 +1791,9 @@ router.post('/update-desc', jsonParser, async (req, res) => {
                     cartDiscount,totalPrice,qCartData&&qCartData.pDiscount,1
                 )
             }
+            const data = await quote.findOne({ userId:userId });
             const result = await quote.updateOne({ userId:userId }, {$set:data });
             console.log(result)
-            console.log(userId)
             console.log(data)
             //return res.json({...dataQuick,disPercent})
         }
