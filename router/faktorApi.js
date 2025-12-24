@@ -929,7 +929,7 @@ const findCartFunction = async (userIdRaw, manageId, pageSize = 10, offset = 0,
 				} catch {}
 			}
 			qCartDetail = findQuickCartSum(qCartData.cartItems, qCartData.payValue, 
-                qCartData.discount, qCartData.transportPrice);
+                qCartData.fDiscount, qCartData.transportPrice);
 		}
 
         const response = {
@@ -1102,7 +1102,7 @@ const findCartData = async (cartNo) => {
         var cartDetail = ''
 
         cartDetail = findQuickCartSum(cartData.cartItems, 
-            cartData.payValue, cartData.discount,cartData.transportPrice)
+            cartData.payValue, cartData.fDiscount,cartData.transportPrice)
         //if(qCartData) qCartDetail =findQuickCartSum(qCartData.cartItems,qCartData.payValue)
         for (var j = 0; j < cartData.cartItems.length; j++) {
             try {
@@ -1781,7 +1781,7 @@ router.post('/update-desc', jsonParser, async (req, res) => {
         if (cartNo) {
             await cart.updateOne({ cartNo }, { ...data });
         } else {
-            dataQuick = await FindQuick(userId);
+            /*dataQuick = await FindQuick(userId);
             var cartDiscount = req.body.discount
             if(cartDiscount){
                 var qCartData = dataQuick&&dataQuick.qCartData
@@ -1790,7 +1790,7 @@ router.post('/update-desc', jsonParser, async (req, res) => {
                 await CartDiscountToItems(userId,qCartData&&qCartData.cartItems,
                     cartDiscount,totalPrice,qCartData&&qCartData.pDiscount
                 )
-            }
+            }*/
             await quickCart.updateOne({ userId }, {$set:{ ...data }});
 
             //return res.json({...dataQuick,disPercent})

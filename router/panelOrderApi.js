@@ -420,16 +420,16 @@ router.post('/list-client',auth, jsonParser, async (req, res) => { // TODO: chec
         var clientList=[]
         if(adminData.access=="admin"){
             var userList = await users.find(
-                {profile:{$in:adminData.profile}})//{StockId:userData.StockId})
+                {profile:{$in:adminData.profile},access:{$nin:["manager","admin"]}})//{StockId:userData.StockId})
             clientList=(userList.map(item=>item._id.toString()))
         }
         clientList.push(adminData._id.toString())
             var showCart = [];
             const cartList = await carts.aggregate([
-				{ $match: {taskStep:{$nin:["cancel"]}}},
 				{ $match: data.isQuote?{isQuote:true}:{isQuote:false}},
+				{ $match: {status:{$nin:["cancel"]}}},
                 { $addFields: { "userId": { "$toObjectId": "$userId" } } },
-                {
+                { 
                     $lookup: {
                         from: "customers",
                         localField: "userId",
