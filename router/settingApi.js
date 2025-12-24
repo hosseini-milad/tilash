@@ -619,6 +619,10 @@ router.post('/list-faktors', auth, async (req, res) => {
             const customerDetail = await customers.findOne({_id:ObjectID(cartData.userId)})
             filter[i].customer = customerDetail
             filter[i].remainPrice = CalcFaktorRemain(cartData.NetPrice,cartData.bankArray)
+            if(filter[i].remainPrice)
+                filter[i].hasRemain = true
+            else
+                filter[i].remainPrice = false
         }
 		const bankList = await bankAccounts.find({ limit: adminData.username }).lean();
 		return res.json({ filter, tabs, size, bankList });
