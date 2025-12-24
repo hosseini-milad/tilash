@@ -3,6 +3,7 @@ const CalcFaktorRemain=(netPrice,bankData)=>{
 		return netPrice
 	var bankTotal = 0
 	for(var b = 0;b<bankData.length;b++){
+		if(!bankData[b].amount) return 0
 		bankTotal += Number(bankData[b].amount)
 	}
 	return Number(netPrice) - bankTotal
