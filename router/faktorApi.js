@@ -894,7 +894,7 @@ const findCartFunction = async (userIdRaw, manageId, pageSize = 10, offset = 0,
 					try {
 						const cartTemp = cartData[c].cartItems[j];
 						const productData = await products.findOne({ sku: cartTemp.sku }).lean();
-						const cartItemDetail = findCartItemDetail(cartTemp, cartData[c].payValue, cartData[c].discount);
+						const cartItemDetail = findCartItemDetail(cartTemp, cartData[c].payValue, cartData[c].pDiscount);
 						cartData[c].cartItems[j].total = cartItemDetail;
 						cartData[c].cartItems[j].productData = productData;
 					} catch {}
@@ -2442,7 +2442,7 @@ router.post('/quick-to-cart', jsonParser, async (req, res) => {
 		const defaultPay = customers.CustomerID ? '3' : '4';
 		data.payValue = qCartData && qCartData.payValue ? qCartData.payValue : defaultPay;
 		data.description = qCartData && qCartData.description;
-		data.discount = qCartData && qCartData.discount;
+		data.pDiscount = qCartData && qCartData.pDiscount;
 		const quickCartItems = qCartData && qCartData.cartItems;
 		data.cartItems = quickCartItems;
         data.bank = data.bank?data.bank:(qCartData && qCartData.bank);
