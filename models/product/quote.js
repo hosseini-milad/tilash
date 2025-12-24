@@ -13,6 +13,13 @@ const QuoteSchema = new Schema({
     stockId:{type:String},
     description:{type:String},
     discount:{type:String},
-    totalPrice:{ type: String },
+    pDiscount:{type:String},
+    
+    bank:{type:String},
+    bankArray:{type:Array},
+    transport:{type:String},
+    transportPrice:{type:String},
+
+    totalPrice:{ type: String }
 })
 module.exports = mongoose.model('quote',QuoteSchema);
