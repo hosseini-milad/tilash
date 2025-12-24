@@ -2,7 +2,7 @@ const qCart = require("../../models/product/quickCart");
 const products = require("../../models/product/products");
 const findQCartSum = require("./FindQuickCartSum");
 const findCartItemDetail = require("./FindQuickItem");
-const quoteApi = require('../models/product/quote');
+const quoteApi = require('../../models/product/quote');
 
 const FindQuick=async(userId,noDiscount,isQuote)=>{
     if(!userId) return('')
