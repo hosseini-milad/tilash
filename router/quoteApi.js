@@ -34,6 +34,7 @@ const NewQuote = require('../middleware/NewQuote');
 const profileModel = require('../models/auth/ProfileAccess');
 const userModel = require('../models/auth/users');
 const FindQuick = require('../middleware/NewModule/FindQuick');
+const CartDiscountToItems = require('../middleware/NewModule/CartDiscountToItems');
 const { TaxRate } = process.env
 
 router.post('/products', async (req, res) => {
