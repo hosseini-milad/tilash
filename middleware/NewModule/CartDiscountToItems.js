@@ -1,7 +1,9 @@
 const qCart = require("../../models/product/quickCart");
 const findPayValuePrice = require("./FindPayValuePrice");
+const quoteApi = require('../../models/product/quote');
 
-const CartDiscountToItems=async(userId,oldCartItems, cartDiscount,totalPrice,pDiscount)=>{
+const CartDiscountToItems=async(userId,oldCartItems, cartDiscount,totalPrice,
+	pDiscount,isQuote)=>{
 	var cDiscount = 0
 	var preDiscount = 0//pDiscount?Number(pDiscount):0
 	var disCount = Number(cartDiscount)-preDiscount
@@ -22,7 +24,10 @@ const CartDiscountToItems=async(userId,oldCartItems, cartDiscount,totalPrice,pDi
 			cDiscount += newDiscount
 			oldCartItems[i].discount = newDiscount;
 		}
-		await qCart.updateOne({ userId: userId }, { $set: { cartItems: oldCartItems } });
+		if(isQuote)
+			await quoteApi.updateOne({ userId: userId }, { $set: { cartItems: oldCartItems } });
+		else
+			await qCart.updateOne({ userId: userId }, { $set: { cartItems: oldCartItems } });
 		
 
 }

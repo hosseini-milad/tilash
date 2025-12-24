@@ -923,7 +923,7 @@ router.post('/update-desc', jsonParser, async (req, res) => {
                 var qCartDetail = dataQuick&&dataQuick.qCartDetail
                 var totalPrice = qCartDetail&&qCartDetail.totalPrice
                 await CartDiscountToItems(userId,qCartData&&qCartData.cartItems,
-                    cartDiscount,totalPrice,qCartData&&qCartData.pDiscount
+                    cartDiscount,totalPrice,qCartData&&qCartData.pDiscount,1
                 )
             }
             await quoteApi.updateOne({ userId: userId },
