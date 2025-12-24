@@ -615,7 +615,7 @@ router.post('/list-faktors', auth, async (req, res) => {
             var bankData = cartData.bank&&
             await bankAccounts.findOne({ BankAccountID: cartData.bank})
             filter[i].bankName = bankData&&bankData.DlTitle
-            const customerDetail = await customer.findOne({_id:ObjectID(cartData.userId)})
+            const customerDetail = await customers.findOne({_id:ObjectID(cartData.userId)})
             filter[i].customer = customerDetail
         }
 		const bankList = await bankAccounts.find({ limit: adminData.username }).lean();
