@@ -375,7 +375,7 @@ const findCartFunction = async (userId, managerId) => {
             { $sort: { "initDate": -1 } }
         ])
         var clientList=[]
-        const adminData = await users.findOne({ _id: new ObjectId(manageId) });
+        const adminData = await users.findOne({ _id: new ObjectID(managerId) });
 
         if(adminData.access=="admin"){
             var userList = await users.find(
