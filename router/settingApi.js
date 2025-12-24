@@ -31,6 +31,7 @@ const bankAccounts = require('../models/product/bankAccounts');
 const utils = require('../utils');
 const customerModel = require('../models/auth/customers');
 const userModel = require('../models/auth/users');
+const CalcFaktorRemain = require('../middleware/NewModule/CalcFaktorRemain');
 //const UpdateExcel = require('../middleware/UpdateExcel');
 
 router.post('/sliders', async (req, res) => {
@@ -617,6 +618,7 @@ router.post('/list-faktors', auth, async (req, res) => {
             filter[i].bankName = bankData&&bankData.DlTitle
             const customerDetail = await customers.findOne({_id:ObjectID(cartData.userId)})
             filter[i].customer = customerDetail
+            filter[i].remainPrice = CalcFaktorRemain(cartData.NetPrice,cartData.bankArray)
         }
 		const bankList = await bankAccounts.find({ limit: adminData.username }).lean();
 		return res.json({ filter, tabs, size, bankList });
