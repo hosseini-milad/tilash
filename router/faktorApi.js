@@ -929,7 +929,7 @@ const findCartFunction = async (userIdRaw, manageId, pageSize = 10, offset = 0,
 				} catch {}
 			}
 			qCartDetail = findQuickCartSum(qCartData.cartItems, qCartData.payValue, 
-                qCartData.fDiscount, qCartData.transportPrice);
+                qCartData.pDiscount, qCartData.transportPrice);
 		}
 
         const response = {
@@ -1102,7 +1102,7 @@ const findCartData = async (cartNo) => {
         var cartDetail = ''
 
         cartDetail = findQuickCartSum(cartData.cartItems, 
-            cartData.payValue, cartData.fDiscount,cartData.transportPrice)
+            cartData.payValue, cartData.pDiscount,cartData.transportPrice)
         //if(qCartData) qCartDetail =findQuickCartSum(qCartData.cartItems,qCartData.payValue)
         for (var j = 0; j < cartData.cartItems.length; j++) {
             try {
