@@ -1453,7 +1453,7 @@ router.post('/cart-find', jsonParser, async (req, res) => {
 
             }
         var orderData = findCartSum(cartItems, cartData.payValue,
-            cartData.transportPrice,cartData.discount)
+            cartData.transportPrice,cartData.pDiscount)
 
 		if (canEdit&&0) {
 			// add productscount
@@ -2513,7 +2513,7 @@ router.post('/quick-to-quote', jsonParser, async (req, res) => {
 
 		data.payValue = quoteData && quoteData.payValue;
 		data.description = quoteData && quoteData.description;
-		data.discount = quoteData && quoteData.discount;
+		data.pDiscount = quoteData && quoteData.pDiscount;
 		const quoteItems = quoteData && quoteData.cartItems;
 		data.cartItems = quoteItems;
 		const stockId = userData.StockId ? userData.StockId : '5';
@@ -3357,7 +3357,7 @@ router.post('/public-cart-find', async (req, res) => {
                     cartList[0].cartItems[i].productData = productData;
                 } catch { }
 
-                cartList[0].cartItems[i].total = findCartItemDetail(cartItems[i], cartData.payValue, cartData.discount);
+                cartList[0].cartItems[i].total = findCartItemDetail(cartItems[i], cartData.payValue, cartData.pDiscount);
             }
         }
 
