@@ -171,11 +171,12 @@ router.post('/multi-sepidar', jsonParser, auth, async (req, res) => {
         const faktorNo = "T100" + orderDetails[i].cartNo
         var sepidarQuery = await CartToSepidar(cartItems, faktorNo,
             customerData, 
-            orderData.stockId,orderData.discount,
+            orderData.stockId,orderData.pDiscount,
             orderData.cartNo,
             orderData&&orderData.payValue,'',
             orderData&&orderData.transportPrice)
         query.push(sepidarQuery)
+        return(sepidarQuery)
         try{
         var sepidarResult = await sepidarPOST(sepidarQuery, "/api/invoices", 
             ObjectID(adminData._id))

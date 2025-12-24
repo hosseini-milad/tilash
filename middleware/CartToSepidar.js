@@ -1,5 +1,6 @@
 const productModel = require("../models/product/products")
 const MultiplySum = require("./MultiplySum")
+const SepidarDiscountToItems = require("./NewModule/SepidarDiscountToItems")
 
 const {TaxRate} = process.env
 const CartToSepidar=async(data,faktorNo,user,stock,cartOff,
@@ -15,8 +16,10 @@ const CartToSepidar=async(data,faktorNo,user,stock,cartOff,
         const addition = normalPriceCount(transportPrice,1,1)
 
         var itemsToSepidar=[]
-        for(var i=0;i<notNullCartItem.length;i++){
-          const item = notNullCartItem[i]
+        const newItems = SepidarDiscountToItems(notNullCartItem,totalOff,totalOff*10)
+        return(newItems)
+        for(var i=0;i<newItems.length;i++){
+          const item = newItems[i]
           var fee = findPayValuePrice(item.price,payValue?payValue:"3")
           if(item.fixPrice) fee = item.fixPrice
           //console.log("sku: ",item.sku," discount: ",itemDiscount," fee: ",fee)
