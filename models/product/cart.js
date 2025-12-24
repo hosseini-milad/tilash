@@ -16,7 +16,7 @@ const CartSchema = new Schema({
     status:{type:String},
     description:{type:String},
     discount:{type:String},
-    fDiscount:{type:String},
+    pDiscount:{type:String},
     totalPrice:{ type: String },
     taskStep:{ type: String },
     query:{ type: String },
