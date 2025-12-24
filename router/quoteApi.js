@@ -1792,6 +1792,7 @@ router.post('/update-desc', jsonParser, async (req, res) => {
                 )
             }
             const result = await quickCart.updateOne({ userId }, {$set:{ ...data }});
+            console.log(await quickCart.findOne({ userId }))
             console.log(result)
             console.log(userId)
             console.log(data)
