@@ -915,7 +915,7 @@ const findCartFunction = async (userIdRaw, manageId, pageSize = 10, offset = 0,
                 todayCartData.push({ ...cartData[c], userData });
 				cartDetail.push(findCartSum(cartData[c].cartItems, 
                     cartData[c].payValue,cartData[c].transportPrice,
-                    cartData[c].discount));
+                    cartData[c].pDiscount));
                 if(cartData[c].InvoiceID)
                     cartData[c].canEdit = 0
                 else
