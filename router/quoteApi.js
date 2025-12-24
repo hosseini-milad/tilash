@@ -33,6 +33,7 @@ const IsToday = require('../middleware/IsToday');
 const NewQuote = require('../middleware/NewQuote');
 const profileModel = require('../models/auth/ProfileAccess');
 const userModel = require('../models/auth/users');
+const FindQuick = require('../middleware/NewModule/FindQuick');
 const { TaxRate } = process.env
 
 router.post('/products', async (req, res) => {
@@ -913,10 +914,20 @@ router.post('/update-desc', jsonParser, async (req, res) => {
         if (cartNo)
             await cart.updateOne({ cartNo: cartNo },
                 { ...data })
-        else
+        else{
+            dataQuick = await FindQuick(userId,0,1);
+            var cartDiscount = req.body.discount
+            if(cartDiscount){
+                var qCartData = dataQuick&&dataQuick.qCartData
+                var qCartDetail = dataQuick&&dataQuick.qCartDetail
+                var totalPrice = qCartDetail&&qCartDetail.totalPrice
+                await CartDiscountToItems(userId,qCartData&&qCartData.cartItems,
+                    cartDiscount,totalPrice,qCartData&&qCartData.pDiscount
+                )
+            }
             await quoteApi.updateOne({ userId: userId },
                 { ...data })
-
+            }
         const cartDetails = cartNo ? await findCartData(cartNo)
             : await findCartFunction(userId, req.headers['userid'])
         res.json({ ...cartDetails, message: "سبد بروز شد" })
