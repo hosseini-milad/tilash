@@ -915,7 +915,9 @@ router.post('/update-desc', jsonParser, async (req, res) => {
     const data = {
         description: req.body.description,
         discount: req.body.discount,
-        payValue: req.body.payValue
+        payValue: req.body.payValue,
+        transport:req.body.transport,
+        transportPrice:req.body.transportPrice,
     }
     try {
 
