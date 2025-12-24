@@ -1795,6 +1795,7 @@ router.post('/update-desc', jsonParser, async (req, res) => {
             console.log(result)
             const dataRaw = await quote.findOne({ userId:userId });
             console.log(dataRaw)
+            console.log(data)
             //return res.json({...dataQuick,disPercent})
         }
 
