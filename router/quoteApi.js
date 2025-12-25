@@ -807,7 +807,7 @@ router.post('/cart', jsonParser, auth, async (req, res) => {
 });
 
 const findCartFunction = async (userIdRaw, manageId, pageSize = 10, offset = 0, 
-    search, dateFrom = [], dateTo = [],isQuoteTemp=1) => {
+    search, dateFrom = [], dateTo = [],isQuoteTemp="true") => {
     let isSale;
     var userId=userIdRaw
     try {
