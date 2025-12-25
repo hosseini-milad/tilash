@@ -1447,7 +1447,7 @@ router.post('/cart-find', jsonParser, async (req, res) => {
                 catch { }
 
                 if(cartList[0])
-                cartList[0].cartItems[i].total = findCartItemDetail(cartItems[i], cartData.payValue,cartData.discount)
+                cartList[0].cartItems[i].total = findCartItemDetail(cartItems[i], cartData.payValue)//,cartData.discount)
 
 
 
