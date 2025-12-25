@@ -23,6 +23,7 @@ const SepidarDiscountToItems=async(oldCartItems, cartDiscount,totalPrice)=>{
 			cDiscount += newDiscount
 			oldCartItems[i].discount = newDiscount;
 		}
+		console.log(oldCartItems)
 		return oldCartItems
 
 }
