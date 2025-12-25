@@ -18,8 +18,9 @@ const findQCartSum=async(cartItems, payValue, discount ,transportPrice) => {
                 cartItemPrice = cartItems[i].price && cartItems[i].price
                     .replace(/,/g, '').replace(/^\D+/g, '')
             }
+            
             if(fixPrice) cartItemPrice = fixPrice
-            //console.log(cartItemPrice)
+            console.log(cartItemPrice)
             var newCount = parseInt(cartItems[i].count.toString().replace(/,/g, '').replace(/^\D+/g, ''))
             if (cartItems[i].price)
                 cartSum += parseInt(cartItemPrice) * newCount
