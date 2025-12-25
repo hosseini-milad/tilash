@@ -1,5 +1,6 @@
 const productModel = require("../models/product/products")
 const MultiplySum = require("./MultiplySum")
+const findQCartSum = require("./NewModule/FindQuickCartSum")
 const SepidarDiscountToItems = require("./NewModule/SepidarDiscountToItems")
 
 const {TaxRate} = process.env
@@ -14,10 +15,10 @@ const CartToSepidar=async(data,faktorNo,user,stock,cartOff,
         var totalNetPrice = 0
         var totalNetCount = 0
         const addition = normalPriceCount(transportPrice,1,1)
-
+        const result = await findQCartSum(notNullCartItem)
         var itemsToSepidar=[]
         const newItems = SepidarDiscountToItems(notNullCartItem,totalOff,totalOff*10)
-        return(newItems)
+        return(result)
         for(var i=0;i<newItems.length;i++){
           const item = newItems[i]
           var fee = findPayValuePrice(item.price,payValue?payValue:"3")
