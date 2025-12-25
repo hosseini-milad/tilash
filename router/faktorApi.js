@@ -2595,7 +2595,7 @@ router.post('/quote-to-initial', auth, jsonParser, async (req, res) => {
         );
 
         res.status(200).json({ message: "وضعیت با موفقیت به‌روزرسانی شد" ,
-            result,result2
+            result:result2
         });
     try {} catch (error) {
         console.error(error);
