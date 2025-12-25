@@ -2,7 +2,6 @@ const { TaxRate } = process.env
 const findQCartSum=async(cartItems, payValue, discount ,transportPrice) => {
     if (!cartItems) return ({ totalPrice: 0, totalCount: 0 })
     var cartSum = 0;
-console.log(payValue)
     var cartCount = 0;
     var cartDescription = ''
     var cartDiscount = 0;
@@ -21,7 +20,6 @@ console.log(payValue)
             }
             
             if(fixPrice) cartItemPrice = fixPrice
-            console.log(cartItemPrice)
             var newCount = parseInt(cartItems[i].count.toString().replace(/,/g, '').replace(/^\D+/g, ''))
             if (cartItems[i].price)
                 cartSum += parseInt(cartItemPrice) * newCount
