@@ -25,7 +25,7 @@ const CartToSepidar=async(data,faktorNo,user,stock,cartOff,
           if(item.fixPrice) fee = item.fixPrice
           //console.log("sku: ",item.sku," discount: ",itemDiscount," fee: ",fee)
           const Price = normalPriceCount(fee,item.count,1)
-          const itemDiscount = MultiplySum(item.discount,totalOff,1)
+          const itemDiscount = MultiplySum(item.discount,1)
           const Discount =itemDiscount?itemDiscount:0
           totalNetCount += parseInt(item.count)
           //const Discount = discount?normalPriceCount(discount,item.count):0.0000

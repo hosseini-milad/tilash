@@ -48,6 +48,8 @@ router.post('/find-products', auth, async (req, res) => {
         if (subCat) {
             productsMatchCondition.catId = subCat;
         } else if (category) {
+            //const subCats = await category.find({parent:category})
+            //var catList = subCats.map(item=>item.)
             productsMatchCondition.catId = category;
         }
         const productsAggregation = [

@@ -466,7 +466,7 @@ router.post('/list-faktors', auth, async (req, res) => {
             return;
         }
         var clientList=[]
-        if(adminData.access=="admin"){
+        if(0&&adminData.access=="admin"){
             var userList = await userModel.find(
                 {profile:{$in:adminData.profile},access:{$nin:["manager","admin"]}})//{StockId:userData.StockId})
             clientList=(userList.map(item=>item._id.toString()))

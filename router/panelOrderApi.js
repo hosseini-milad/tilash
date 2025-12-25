@@ -418,7 +418,7 @@ router.post('/list-client',auth, jsonParser, async (req, res) => { // TODO: chec
             return;
         }
         var clientList=[]
-        if(adminData.access=="admin"){
+        if(0&&adminData.access=="admin"){
             var userList = await users.find(
                 {profile:{$in:adminData.profile},access:{$nin:["manager","admin"]}})//{StockId:userData.StockId})
             clientList=(userList.map(item=>item._id.toString()))
@@ -427,7 +427,7 @@ router.post('/list-client',auth, jsonParser, async (req, res) => { // TODO: chec
             var showCart = [];
             const cartList = await carts.aggregate([
 				{ $match: data.isQuote?{isQuote:true}:{isQuote:false}},
-				{ $match: {status:{$nin:["cancel"]}}},
+				{ $match: {taskStep:{$nin:["cancel"]}}},
                 { $addFields: { "userId": { "$toObjectId": "$userId" } } },
                 { 
                     $lookup: {
