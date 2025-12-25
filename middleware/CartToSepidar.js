@@ -6,7 +6,7 @@ const SepidarDiscountToItems = require("./NewModule/SepidarDiscountToItems")
 const {TaxRate} = process.env
 const CartToSepidar=async(data,faktorNo,user,stock,cartOff,
   orderNo,payValue,fullPrice,transportPrice)=>{
-    var payValueFinal = (payValue&&payValue=="3")?"1":payValue
+    var payValueFinal = (payValue&&payValue=="3")?"3":payValue
         const notNullCartItem = []
         const totalOff= cartOff?parseInt(cartOff):0
         for(var i=0;i<data.length;i++)
