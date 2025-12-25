@@ -31,7 +31,6 @@ const bankAccounts = require('../models/product/bankAccounts');
 const utils = require('../utils');
 const customerModel = require('../models/auth/customers');
 const userModel = require('../models/auth/users');
-const CalcFaktorRemain = require('../middleware/NewModule/CalcFaktorRemain');
 //const UpdateExcel = require('../middleware/UpdateExcel');
 
 router.post('/sliders', async (req, res) => {
@@ -171,7 +170,7 @@ router.post('/multi-sepidar', jsonParser, auth, async (req, res) => {
         const faktorNo = "T100" + orderDetails[i].cartNo
         var sepidarQuery = await CartToSepidar(cartItems, faktorNo,
             customerData, 
-            orderData.stockId,orderData.pDiscount,
+            orderData.stockId,orderData.discount,
             orderData.cartNo,
             orderData&&orderData.payValue,'',
             orderData&&orderData.transportPrice)
@@ -231,7 +230,7 @@ router.post('/multi-sepidar', jsonParser, auth, async (req, res) => {
         }
         
         res.json({ data: "sepidarResult",query,result,
-            message: error?error:"سفارشات در سپیدار ثبت شد" })
+            message: error?'':"سفارشات در سپیدار ثبت شد" })
     }
     catch (error) {
         res.status(500).json({ error: error.message })
@@ -425,75 +424,6 @@ router.post('/reg-sanad-sepidar', jsonParser, auth, async (req, res) => {
         success,fail,bankList,bankDetail,
         result:result})
 })
-router.post('/attach-sanad-sepidar', jsonParser, auth, async (req, res) => {
-    const InvoiceID = req.body.InvoiceID
-    const {bank,bankDate,amount}= req.body
-    if(!bank || !InvoiceID || !amount){
-        return res.status(400).json({error:"اطلاعات ناقص است"})
-    }
-    //const NumberID = req.body.NumberID
-    const manageId = req.headers['userid']
-
-    const faktorData = await faktor.findOne({ InvoiceID: InvoiceID })
-    
-    var bDate = bankDate?bankDate:now.toLocaleDateString('en')
-    var ReceiptIDs = ''
-    var payQuery={
-        "GUID": "124ab075-fc79-417f-b8cf-2a"+
-            (Math.floor(Math.random()*9000000000) + 1000000000),
-        "InvoiceID": InvoiceID,
-        "Description": faktorData.InvoiceNumber,
-        "Date":bDate,
-        "Drafts": [{
-            "BankAccountID": bank,
-            "Description": "حواله",
-            "Number": faktorData.description?faktorData.description:"000",
-            "Date":bDate,
-            "Amount": amount?amount:faktorData.NetPrice
-        }]
-    }
-    var recieptResult = await sepidarPOST(payQuery, "/api/Receipts/BasedOnInvoice", ObjectID(manageId))
-            
-    var ReceiptID = recieptResult&&recieptResult.ReceiptID
-    if(!ReceiptID){
-        result={
-            error:recieptResult&&recieptResult.Message,
-            message:"ناموفق",
-            query:payQuery,
-            InvoiceID:InvoiceID
-        }
-        res.status(400).json({error:recieptResult&&recieptResult.Message,query:payQuery})
-        return
-    }
-    await transaction.create({
-        userId:manageId,
-        sepidarID:ReceiptID,
-        InvoiceID:InvoiceID,
-        sepidarResult:recieptResult,
-        bankCode:bank,
-        faktorNo:faktorData.faktorNo,
-        orderNo:faktorData.Number,
-        payStatus:"done",
-        date:bDate,
-        payValue:amount}
-    )
-    result={
-        error:'',
-        result:ReceiptID,
-        query:payQuery,
-        InvoiceID:InvoiceID
-    }
-    await faktor.updateOne({InvoiceID:InvoiceID},
-    {$set:{ReceiptID:ReceiptID,ReceiptIDs,Status:"register"}}) 
-    
-        
-    
-    
-    res.json({message:"سند سفارش ثبت شد",
-        payQuery,
-        result:result})
-})
-
 router.post('/reg-sanad-sepidar-old', jsonParser, auth, async (req, res) => {
     const InvoiceID = req.body.InvoiceID
     const NumberID = req.body.NumberID
@@ -617,16 +547,6 @@ router.post('/list-faktors', auth, async (req, res) => {
             var bankData = cartData.bank&&
             await bankAccounts.findOne({ BankAccountID: cartData.bank})
             filter[i].bankName = bankData&&bankData.DlTitle
-            const customerDetail = await customers.findOne({_id:ObjectID(cartData.userId)})
-            filter[i].customer = customerDetail
-            filter[i].remainPrice = CalcFaktorRemain(cartData.NetPrice,cartData.bankArray)
-            
-            if(filter[i].remainPrice&&filter[i].ReceiptID)
-                filter[i].hasRemain = true
-            else
-                filter[i].hasRemain = false
-            if(filter[i].remainPrice == "-")
-                filter[i].hasRemain = true
         }
 		const bankList = await bankAccounts.find({ limit: adminData.username }).lean();
 		return res.json({ filter, tabs, size, bankList });
