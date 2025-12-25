@@ -894,7 +894,7 @@ const findCartFunction = async (userIdRaw, manageId, pageSize = 10, offset = 0,
 					try {
 						const cartTemp = cartData[c].cartItems[j];
 						const productData = await products.findOne({ sku: cartTemp.sku }).lean();
-						const cartItemDetail = findCartItemDetail(cartTemp, cartData[c].payValue, cartData[c].pDiscount);
+						const cartItemDetail = findCartItemDetail(cartTemp, cartData[c].payValue);//, cartData[c].pDiscount);
 						cartData[c].cartItems[j].total = cartItemDetail;
 						cartData[c].cartItems[j].productData = productData;
 					} catch {}
