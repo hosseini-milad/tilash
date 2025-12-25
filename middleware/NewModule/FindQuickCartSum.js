@@ -2,7 +2,7 @@ const { TaxRate } = process.env
 const findQCartSum=async(cartItems, payValue, discount ,transportPrice) => {
     if (!cartItems) return ({ totalPrice: 0, totalCount: 0 })
     var cartSum = 0;
-console.log(cartItems.length)
+console.log(payValue)
     var cartCount = 0;
     var cartDescription = ''
     var cartDiscount = 0;
