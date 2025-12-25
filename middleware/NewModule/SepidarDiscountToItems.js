@@ -1,8 +1,6 @@
-const qCart = require("../../models/product/quickCart");
 const findPayValuePrice = require("./FindPayValuePrice");
-const quoteApi = require('../../models/product/quote');
 
-const SepidarDiscountToItems=async(oldCartItems, cartDiscount,totalPrice)=>{
+const SepidarDiscountToItems=(oldCartItems, cartDiscount,totalPrice)=>{
 	var cDiscount = 0
 	var preDiscount = 0//pDiscount?Number(pDiscount):0
 	var disCount = Number(cartDiscount)-preDiscount
