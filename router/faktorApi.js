@@ -2584,7 +2584,7 @@ router.post('/quote-to-initial', auth, jsonParser, async (req, res) => {
         return
     }
 
-    try {
+    
         
 
         const result2 = await cart.updateOne(
@@ -2597,7 +2597,7 @@ router.post('/quote-to-initial', auth, jsonParser, async (req, res) => {
         res.status(200).json({ message: "وضعیت با موفقیت به‌روزرسانی شد" ,
             result,result2
         });
-    } catch (error) {
+    try {} catch (error) {
         console.error(error);
         res.status(500).json({ error: "در هنگام به‌روزرسانی خطایی رخ داد" });
     }
