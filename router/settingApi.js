@@ -750,4 +750,80 @@ router.post('/updateProductExcel',jsonParser,async(req,res)=>{
     }
 })
 
+router.post('/attach-sanad-sepidar', jsonParser, auth, async (req, res) => {
+    const InvoiceID = req.body.InvoiceID
+    const {bank,bankDate,amount}= req.body
+    if(!bank || !InvoiceID || !amount){
+        return res.status(400).json({error:"اطلاعات ناقص است"})
+    }
+    //const NumberID = req.body.NumberID
+    const manageId = req.headers['userid']
+
+    const faktorData = await faktor.findOne({ InvoiceID: InvoiceID })
+    
+    var bDate = bankDate?bankDate:now.toLocaleDateString('en')
+    var ReceiptIDs = ''
+    var payQuery={
+        "GUID": "124ab075-fc79-417f-b8cf-2a"+
+            (Math.floor(Math.random()*9000000000) + 1000000000),
+        "InvoiceID": InvoiceID,
+        "Description": faktorData.InvoiceNumber,
+        "Date":bDate,
+        "Drafts": [{
+            "BankAccountID": bank,
+            "Description": "حواله",
+            "Number": faktorData.description?faktorData.description:"000",
+            "Date":bDate,
+            "Amount": amount?amount:faktorData.NetPrice
+        }]
+    }
+    var recieptResult = await sepidarPOST(payQuery, "/api/Receipts/BasedOnInvoice", ObjectID(manageId))
+            
+    var ReceiptID = recieptResult&&recieptResult.ReceiptID
+    if(!ReceiptID){
+        result={
+            error:recieptResult&&recieptResult.Message,
+            message:"ناموفق",
+            query:payQuery,
+            InvoiceID:InvoiceID
+        }
+        res.status(400).json({error:recieptResult&&recieptResult.Message,query:payQuery})
+        return
+    }
+    await transaction.create({
+        userId:manageId,
+        sepidarID:ReceiptID,
+        InvoiceID:InvoiceID,
+        sepidarResult:recieptResult,
+        bankCode:bank,
+        faktorNo:faktorData.faktorNo,
+        orderNo:faktorData.Number,
+        payStatus:"done",
+        date:bDate,
+        payValue:amount}
+    )
+    result={
+        error:'',
+        result:ReceiptID,
+        query:payQuery,
+        InvoiceID:InvoiceID
+    }
+    var oldReciepts = faktorData.ReceiptIDs
+    var newReciepts = oldReciepts.push(ReceiptID)
+    
+    var oldBanks = faktorData.bankArray
+    var newBanks = oldBanks.push({bank:bank,amount:amount,bankDate:bDate})
+    await faktor.updateOne({InvoiceID:InvoiceID},
+    {$set:{ReceiptID:ReceiptID,bankArray:newBanks,
+        ReceiptIDs:newReciepts,Status:"register"}}) 
+    
+        
+    
+    
+    res.json({message:"سند سفارش ثبت شد",
+        payQuery,
+        result:result})
+})
+
+
 module.exports = router;
