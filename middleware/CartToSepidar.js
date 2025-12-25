@@ -17,7 +17,7 @@ const CartToSepidar=async(data,faktorNo,user,stock,cartOff,
         const addition = normalPriceCount(transportPrice,1,1)
         const result = await findQCartSum(notNullCartItem,"3")
         var itemsToSepidar=[]
-        const newItems = SepidarDiscountToItems(notNullCartItem,totalOff,totalOff*10)
+        const newItems = SepidarDiscountToItems(notNullCartItem,totalOff,result&&result.totalPrice)
         return({result,notNullCartItem})
         for(var i=0;i<newItems.length;i++){
           const item = newItems[i]
