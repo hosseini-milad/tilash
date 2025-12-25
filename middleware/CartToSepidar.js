@@ -18,7 +18,7 @@ const CartToSepidar=async(data,faktorNo,user,stock,cartOff,
         const result = await findQCartSum(notNullCartItem)
         var itemsToSepidar=[]
         const newItems = SepidarDiscountToItems(notNullCartItem,totalOff,totalOff*10)
-        return(result)
+        return({result,notNullCartItem})
         for(var i=0;i<newItems.length;i++){
           const item = newItems[i]
           var fee = findPayValuePrice(item.price,payValue?payValue:"3")
