@@ -177,7 +177,15 @@ router.post('/multi-sepidar', jsonParser, auth, async (req, res) => {
             orderData&&orderData.transportPrice)
         query.push(sepidarQuery)
         if(orderDetails[i].cartNo == "s46306")
-            return res.json(sepidarQuery)
+            return res.json({query:sepidarQuery,
+        items: cartItems, faktorNo,
+            customerData, 
+            stockId:orderData.stockId,
+            cartdiscount:orderData.pDiscount,
+            cartNo:orderData.cartNo,
+            payValue:orderData.payValue,
+            transportPrice:orderData&&orderData.transportPrice
+        })
         try{
         var sepidarResult = await sepidarPOST(sepidarQuery, "/api/invoices", 
             ObjectID(adminData._id))
