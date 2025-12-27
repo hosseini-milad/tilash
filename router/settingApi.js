@@ -166,6 +166,17 @@ router.post('/multi-sepidar', jsonParser, auth, async (req, res) => {
         for(var i = 0;i<orderDetails.length;i++){
             var orderData = orderDetails[i]
             var cartItems = orderData.cartItems
+            
+            if(orderDetails[i].cartNo == "s46306")
+            return res.json({query:"sepidarQuery",
+        items: cartItems, faktorNo:"123",
+            //customerData, 
+            stockId:orderData.stockId,
+            cartdiscount:orderData.pDiscount,
+            cartNo:orderData.cartNo,
+            payValue:orderData.payValue,
+            transportPrice:orderData&&orderData.transportPrice
+        })
             const customerData = await customers.findOne({ _id: ObjectID(orderDetails[i].userId) })
         
         const faktorNo = "T100" + orderDetails[i].cartNo
@@ -176,16 +187,7 @@ router.post('/multi-sepidar', jsonParser, auth, async (req, res) => {
             orderData&&orderData.payValue,'',
             orderData&&orderData.transportPrice)
         query.push(sepidarQuery)
-        if(orderDetails[i].cartNo == "s46306")
-            return res.json({query:sepidarQuery,
-        items: cartItems, faktorNo,
-            customerData, 
-            stockId:orderData.stockId,
-            cartdiscount:orderData.pDiscount,
-            cartNo:orderData.cartNo,
-            payValue:orderData.payValue,
-            transportPrice:orderData&&orderData.transportPrice
-        })
+        
         try{
         var sepidarResult = await sepidarPOST(sepidarQuery, "/api/invoices", 
             ObjectID(adminData._id))
