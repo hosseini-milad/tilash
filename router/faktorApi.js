@@ -2552,6 +2552,7 @@ const pureCartPrice = (cartItem, payValue) => {
 }
 router.post('/quote-to-initial', auth, jsonParser, async (req, res) => {
     var orderNo = req.body.orderNo
+    const manageId = req.user.user_id
     if(!orderNo)
         orderNo = req.body.OrderNo
 
@@ -2591,7 +2592,9 @@ router.post('/quote-to-initial', auth, jsonParser, async (req, res) => {
         const result2 = await cart.updateOne(
             { cartNo: orderNo },
             {
-                $set: { isQuote: false ,initDate:Date.now()}
+                $set: { isQuote: false ,initDate:Date.now(),
+                    manageId
+                }
             },
         );
 
