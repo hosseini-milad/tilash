@@ -18,14 +18,15 @@ const CartToSepidar=async(data,faktorNo,user,stock,cartOff,
         const result = await findQCartSum(notNullCartItem,"3")
         var itemsToSepidar=[]
         const newItems = SepidarDiscountToItems(notNullCartItem,totalOff,result&&result.totalPrice)
+        
         //return({result,notNullCartItem})
-        for(var i=0;i<newItems.length;i++){
+        for(var i=0;i<newItems.length;i++){ 
           const item = newItems[i]
           var fee = findPayValuePrice(item.price,payValue?payValue:"3")
           if(item.fixPrice) fee = item.fixPrice
           //console.log("sku: ",item.sku," discount: ",itemDiscount," fee: ",fee)
           const Price = normalPriceCount(fee,item.count,1)
-          const itemDiscount = MultiplySum(item.discount,1)
+          const itemDiscount = Number(item.discount)
           const Discount =itemDiscount?itemDiscount:0
           totalNetCount += parseInt(item.count)
           //const Discount = discount?normalPriceCount(discount,item.count):0.0000
@@ -45,7 +46,7 @@ const CartToSepidar=async(data,faktorNo,user,stock,cartOff,
             "Quantity": toInt(item.count),
             "Fee": toInt(fee),
             "Price": normalPriceCount(Price),
-            "Discount": i==0?normalPriceCount(Discount):0,
+            "Discount": normalPriceCount(Discount),
             "Tax": normalPriceCount(Tax),
             "NetPrice":normalPriceCount(NetPrice),
             "Duty": 0.0000,

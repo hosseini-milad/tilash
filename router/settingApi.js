@@ -167,16 +167,6 @@ router.post('/multi-sepidar', jsonParser, auth, async (req, res) => {
             var orderData = orderDetails[i]
             var cartItems = orderData.cartItems
             
-            if(orderDetails[i].cartNo == "s46306")
-            return res.json({query:"sepidarQuery",
-        items: cartItems, faktorNo:"123",
-            //customerData, 
-            stockId:orderData.stockId,
-            cartdiscount:orderData.pDiscount,
-            cartNo:orderData.cartNo,
-            payValue:orderData.payValue,
-            transportPrice:orderData&&orderData.transportPrice
-        })
             const customerData = await customers.findOne({ _id: ObjectID(orderDetails[i].userId) })
         
         const faktorNo = "T100" + orderDetails[i].cartNo
@@ -188,6 +178,16 @@ router.post('/multi-sepidar', jsonParser, auth, async (req, res) => {
             orderData&&orderData.transportPrice)
         query.push(sepidarQuery)
         
+            if(orderDetails[i].cartNo == "d16075")
+            return res.json({query:sepidarQuery,
+        items: cartItems, faktorNo:"123",
+            //customerData, 
+            stockId:orderData.stockId,
+            cartdiscount:orderData.pDiscount,
+            cartNo:orderData.cartNo,
+            payValue:orderData.payValue,
+            transportPrice:orderData&&orderData.transportPrice
+        })
         try{
         var sepidarResult = await sepidarPOST(sepidarQuery, "/api/invoices", 
             ObjectID(adminData._id))
@@ -609,7 +609,7 @@ router.get('/my-list-bank',auth, async (req,res)=>{
     for(var i=0;i<bankList.length;i++){
         bankList[i].DlTitle = bankList[i].DlTitle+" - " + bankList[i].DlCode
     }
-    res.json({data:bankList,bankData:adminData&&adminData.bank})
+    res.json({oldData:bankList,data:adminData&&adminData.bank})
 })
 
 router.post('/add-bank-to-cart',auth, async (req,res)=>{

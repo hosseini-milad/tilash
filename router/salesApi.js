@@ -5,13 +5,14 @@ const productSchema = require('../models/product/products');
 const cart = require('../models/product/cart');
 const qCart = require('../models/product/quickCart');
 const users = require('../models/auth/users');
-const category = require('../models/product/category');
+const categoryModel = require('../models/product/category');
 const userModel = require('../models/auth/users');
 const taskModel = require('../models/crm/tasks');
 const profileModel = require('../models/auth/ProfileAccess');
 const cartModel = require('../models/product/cart');
 const quickCartModel = require('../models/product/quickCart');
 const stockModel = require('../models/product/Stocks');
+var ObjectID = require('mongodb').ObjectID;
 
 router.post('/find-products', auth, async (req, res) => {
 	try {
@@ -48,9 +49,17 @@ router.post('/find-products', auth, async (req, res) => {
         if (subCat) {
             productsMatchCondition.catId = subCat;
         } else if (category) {
-            //const subCats = await category.find({parent:category})
-            //var catList = subCats.map(item=>item.)
-            productsMatchCondition.catId = category;
+            var catData = await categoryModel.findOne({catCode:category})
+            var catList =[category]
+            if(catData) {
+                var subCatsData = await categoryModel.find({parent:(catData._id),
+                    catCode:{$exists:true}
+                })
+                var subCatList = subCatsData.map(item=>item.catCode)
+                catList.push(...subCatList)
+            }
+            console.log(catList)
+            productsMatchCondition.catId = {$in:catList};
         }
         const productsAggregation = [
             { $match: productsMatchCondition },
