@@ -459,7 +459,9 @@ router.post('/list-client',auth, jsonParser, async (req, res) => { // TODO: chec
                             cartList[i].userInfo[0].username.includes(data.customer);
                         var phoneSimilar = cartList[i].userInfo[0].phone &&
                             cartList[i].userInfo[0].phone.includes(data.customer);
-                        if (!userSimilar && !phoneSimilar)
+                        var codeSimilar = cartList[i].userInfo[0].cCode &&
+                            cartList[i].userInfo[0].cCode.includes(data.customer);
+                        if (!userSimilar && !phoneSimilar && !codeSimilar)
                             continue;
                     } else {
                         continue;

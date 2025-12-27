@@ -820,10 +820,10 @@ router.post('/attach-sanad-sepidar', jsonParser, auth, async (req, res) => {
         InvoiceID:InvoiceID
     }
     var oldReciepts = faktorData.ReceiptIDs
-    var newReciepts = oldReciepts.push(ReceiptID)
+    oldReciepts.push(ReceiptID)
     
     var oldBanks = faktorData.bankArray
-    var newBanks = oldBanks.push({bank:bank,amount:amount,bankDate:bDate})
+    oldBanks.push({bank:bank,amount:amount,bankDate:bDate})
     await faktor.updateOne({InvoiceID:InvoiceID},
     {$set:{ReceiptID:ReceiptID,bankArray:newBanks,
         ReceiptIDs:newReciepts,Status:"register"}}) 
