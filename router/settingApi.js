@@ -561,6 +561,8 @@ router.post('/list-faktors', auth, async (req, res) => {
             filter[i].bankName = bankData&&bankData.DlTitle
             const customerDetail = await customers.findOne({_id:ObjectID(cartData.userId)})
             filter[i].customer = customerDetail
+            const adminData = await userModel.findOne({ _id: ObjectID(cartData.manageId) })
+            filter[i].userInfo = adminData
             filter[i].remainPrice = CalcFaktorRemain(cartData.NetPrice,cartData.bankArray)
             
             if(filter[i].remainPrice&&filter[i].ReceiptID)
