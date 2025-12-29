@@ -793,7 +793,7 @@ router.get('/list-status', auth, jsonParser, async (req, res) => {
 			showState = [
 				{
 					title: 'انجام شده',
-					enTitle: 'dodone',
+					enTitle: 'done',
 				},
 				{
 					title: 'انجام نشده',
