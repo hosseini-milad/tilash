@@ -467,7 +467,7 @@ router.post('/list-client',auth, jsonParser, async (req, res) => { // TODO: chec
                         continue;
                     }
                 }
-            var tempStatus = cartList[i].InvoiceID?"dodone":"undone"
+            var tempStatus = cartList[i].InvoiceID?"done":"undone"
 			if(cartList[i].status=="cancel")
 				tempStatus = "cancel"
 			if(cartList[i].isQuote)
