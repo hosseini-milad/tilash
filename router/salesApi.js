@@ -160,7 +160,7 @@ router.post('/find-products', auth, async (req, res) => {
                 }
 			}
 		}
-		return res.json({ products: searchProductResult });
+		return res.json({ products: searchProductResult ,size:productCount});
 	} catch (error) {
 		return res.status(500).json({ message: error.message });
 	}

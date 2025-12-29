@@ -48,6 +48,7 @@ const customerModel = require('../models/auth/customers');
 const FindFaktor = require('../middleware/NewModule/FindFaktor');
 const FindQuick = require('../middleware/NewModule/FindQuick');
 const CartDiscountToItems = require('../middleware/NewModule/CartDiscountToItems');
+const FindCurrentExistSale = require('../middleware/CurrentExistSale');
 const { TaxRate } = process.env
 
 const commaSeparatedPrices = (number) => {
@@ -1884,7 +1885,7 @@ const checkAvailable = async (item, stockId = '13', cartNo) => {
 	let totalCount = existItem ? parseFloat(existItem.quantity) : 0;
 	// totalCount += existItem3 ? parseFloat(existItem3.quantity) : 0;
 
-	const currentOrder = await FindCurrentExist(item.id, cartNo, stockId);
+	const currentOrder = await FindCurrentExistSale(item.id, cartNo, stockId);
 	let minusCount = currentOrder + item.count;
 	return compareCount(totalCount, minusCount);
 };

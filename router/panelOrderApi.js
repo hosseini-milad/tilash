@@ -474,16 +474,12 @@ router.post('/list-client',auth, jsonParser, async (req, res) => { // TODO: chec
                 var taskStep = cartTask ? cartTask.taskStep : null;
                 var orderStatus =  cartList[i].status
                 if (data.status&&!orderStatus) {
-					if(taskStep){
-						if ((taskStep) !== data.status)
-							continue;
-					}
-					else if(tempStatus!== data.status)
+					if(tempStatus!== data.status)
 						continue;
                 }
 
                 var totalPrice = findCartSum(cartList[i].cartItems, 
-					cartList[i].payValue,cartList[i].transportPrice);
+					cartList[i].payValue,cartList[i].transportPrice,cartList[i].pDiscount);
 
 				const bankData = await bankAccounts.findOne({BankAccountID:cartList[i].bank})
 				cartList[i].bankName = "-"
