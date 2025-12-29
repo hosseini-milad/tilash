@@ -467,13 +467,17 @@ router.post('/list-client',auth, jsonParser, async (req, res) => { // TODO: chec
                         continue;
                     }
                 }
-            var tempStatus = cartList[i].InvoiceID?"done":"undone"
+            var tempStatus = cartList[i].InvoiceID?"dodone":"undone"
+			if(cartList[i].status=="cancel")
+				tempStatus = "cancel"
+			if(cartList[i].isQuote)
+				tempStatus = "quote"
                 if(!isSale) isSale=cartList[i].isSale?true:false
                 var cartTask = cartList[i].taskInfo && cartList[i].taskInfo[0];
                 var InvoiceID = cartTask?(cartTask.result?cartTask.result.InvoiceID:''):''
                 var taskStep = cartTask ? cartTask.taskStep : null;
                 var orderStatus =  cartList[i].status
-                if (data.status&&!orderStatus) {
+                if (data.status) {
 					if(tempStatus!== data.status)
 						continue;
                 }
