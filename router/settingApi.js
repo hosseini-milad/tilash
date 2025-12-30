@@ -165,6 +165,7 @@ router.post('/multi-sepidar', jsonParser, auth, async (req, res) => {
         const adminData = await users.findOne({ _id: ObjectID(manageId) })
         for(var i = 0;i<orderDetails.length;i++){
             var orderData = orderDetails[i]
+            if(orderData.isQuote) continue
             var cartItems = orderData.cartItems
             
             const customerData = await customers.findOne({ _id: ObjectID(orderDetails[i].userId) })
