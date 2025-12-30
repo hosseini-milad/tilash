@@ -823,6 +823,9 @@ router.get('/list-status', auth, jsonParser, async (req, res) => {
 			{
 				title: 'ثبت شده',
 				enTitle: 'register',
+			},{
+				title: 'دارای باقیمانده',
+				enTitle: 'hasRemain',
 			},
 			{
 				title: 'ثبت نشده',

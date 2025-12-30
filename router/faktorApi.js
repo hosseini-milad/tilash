@@ -783,7 +783,8 @@ router.post('/canSubmitOrderForCustomer', jsonParser, auth, async (req, res) => 
 
 router.post('/cart', jsonParser, auth, async (req, res) => {
     try {
-        const { userId, offset = 0, pageSize = 10, search, dateFrom, dateTo ,isQuote=0} = req.body;
+        const { userId, offset = 0, pageSize = 10, search, 
+            dateFrom, dateTo ,isQuote=0,code} = req.body;
         const skip = parseInt(offset);
         const limit = parseInt(pageSize);
         const canSubmit = userId?await checkIfCanSubmitOrderForThisCustomer(req.headers['userid'], userId):1;
@@ -792,7 +793,7 @@ router.post('/cart', jsonParser, auth, async (req, res) => {
         }
 		const cartDetails = await findCartFunction(userId, 
             req.headers['userid'], limit, skip, 
-            search, dateFrom, dateTo,isQuote);
+            search, dateFrom, dateTo,isQuote,code);
         const response = {
             canSubmit: true,
             ...cartDetails,
@@ -808,7 +809,7 @@ router.post('/cart', jsonParser, auth, async (req, res) => {
 });
 
 const findCartFunction = async (userIdRaw, manageId, pageSize = 10, offset = 0, 
-    search, dateFrom = [], dateTo = [],isQuoteTemp=0) => {
+    search, dateFrom = [], dateTo = [],isQuoteTemp=0,code) => {
     let isSale;
     var userId=userIdRaw
     try {
@@ -835,9 +836,13 @@ const findCartFunction = async (userIdRaw, manageId, pageSize = 10, offset = 0,
         if(fromDate){
             cartDataMatchCondition.initDate={ $gte: new Date(fromDate), $lte: new Date(toDate)}
         }
-		if (userId) {
+		if (userId && !code) {
 			cartDataMatchCondition.userId = userId;
 		}
+        if(code){
+            var userList = await customerModel.find({code:new RegExp('.*' + code + '.*')})
+            cartDataMatchCondition.userId = {$in:userList.map(item=>item._id)};
+        }
         if (search) {
             cartDataMatchCondition['$or'] = [
                 { 'cartItems.sku': { $regex: search } },

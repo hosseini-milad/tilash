@@ -517,7 +517,12 @@ router.post('/list-faktors', auth, async (req, res) => {
             matchCondition.manageId = {$in:clientList}//userId;
         }
         if (status) {
-            matchCondition.Status = status;
+            if(status =="hasRemain"){
+                matchCondition.Status = "register";
+                matchCondition.hasRemain = true
+
+            }
+            else matchCondition.Status = status;
         }
         if (type === 'Website') {
             matchCondition.isWeb = true;
