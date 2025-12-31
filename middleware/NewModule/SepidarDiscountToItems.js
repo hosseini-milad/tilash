@@ -12,7 +12,7 @@ const SepidarDiscountToItems=(oldCartItems, cartDiscount,totalPrice)=>{
 			var price = findPayValuePrice(oldCartItems[i].price, oldCartItems.payValue)
 			var count = Number(oldCartItems[i].count)
 			var oldDiscount = oldCartItems[i].discount?Number(oldCartItems[i].discount ):0
-			
+			if(oldDiscount&&oldDiscount<100) oldDiscount = oldDiscount * price*count
 			var roundDiscount = 0
 			if(i == oldCartItems.length-1){
 				roundDiscount = disCount - cDiscount
