@@ -5,9 +5,10 @@ const SepidarDiscountToItems=(oldCartItems, cartDiscount,totalPrice)=>{
 	var preDiscount = 0//pDiscount?Number(pDiscount):0
 	var disCount = Number(cartDiscount)-preDiscount
 	var disPercent= 0
-	//if(disCount>100){
+	if(disCount>100){
 		disPercent = disCount/Number(totalPrice)
-	//}
+	}
+	else disPercent = disCount/100
 		for (var i = 0; i < (oldCartItems && oldCartItems.length); i++) {
 			var price = findPayValuePrice(oldCartItems[i].price, oldCartItems.payValue)
 			var count = Number(oldCartItems[i].count)

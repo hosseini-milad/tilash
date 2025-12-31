@@ -841,6 +841,7 @@ const findCartFunction = async (userIdRaw, manageId, pageSize = 10, offset = 0,
 		}
         if(code){
             var userList = await customerModel.find({code:new RegExp('.*' + code + '.*')})
+        
             cartDataMatchCondition.userId = {$in:userList.map(item=>item._id)};
         }
         if (search) {
@@ -1181,7 +1182,7 @@ const findQuickCartSum = (cartItems, payValue, discount ,transportPrice) => {
             cartDiscount += parseInt(discount)
         else
             cartDiscount += discount &&
-                (parseInt(cartSum) *
+                (parseInt(cartSum-cartDiscount) *
                     parseInt(discount) / 100)
     }
     const totalPriceNoTax = cartSum - cartDiscount
