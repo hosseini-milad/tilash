@@ -1200,7 +1200,7 @@ const findQuickCartSum = (cartItems, payValue, discount ,transportPrice) => {
         cartDescription: cartDescription
     })
 }
-const findCartSum = (cartItems, payValue,transportPrice,cartDiscount=0) => {
+const findCartSum = (cartItems, payValue,transportPrice,discount=0) => {
     if (!cartItems) return ({ totalPrice: 0, totalCount: 0 })
     var cartSum = 0;
     var cartCount = 0;
