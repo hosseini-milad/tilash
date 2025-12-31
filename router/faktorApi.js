@@ -1204,7 +1204,7 @@ const findCartSum = (cartItems, payValue,transportPrice,cartDiscount=0) => {
     if (!cartItems) return ({ totalPrice: 0, totalCount: 0 })
     var cartSum = 0;
     var cartCount = 0;
-    var cartDiscount = Number(cartDiscount);
+    var cartDiscount = 0;//Number(cartDiscount);
     var cartDescription = ''
     var tPrice = transportPrice?Number(transportPrice):0
     for (var i = 0; i < cartItems.length; i++) {
@@ -1231,6 +1231,15 @@ const findCartSum = (cartItems, payValue,transportPrice,cartDiscount=0) => {
                         (1 + Number(TaxRate)) * (off) / 100
             }
         } catch { }
+    }
+    
+    if (discount) {
+        if (parseInt(discount) > 100)
+            cartDiscount += parseInt(discount)
+        else
+            cartDiscount += discount &&
+                (parseInt(cartSum-cartDiscount) *
+                    parseInt(discount) / 100)
     }
     return ({
         totalFee: cartSum,
