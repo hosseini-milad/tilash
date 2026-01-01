@@ -58,7 +58,6 @@ router.post('/find-products', auth, async (req, res) => {
                 var subCatList = subCatsData.map(item=>item.catCode)
                 catList.push(...subCatList)
             }
-            console.log(catList)
             productsMatchCondition.catId = {$in:catList};
         }
         const productsAggregation = [
@@ -160,7 +159,9 @@ router.post('/find-products', auth, async (req, res) => {
                 }
 			}
 		}
-		return res.json({ products: searchProductResult ,size:productCount});
+		return res.json({ products: searchProductResult ,size:productCount,
+            pageSize:Math.ceil(productCount/10)
+        });
 	} catch (error) {
 		return res.status(500).json({ message: error.message });
 	}
