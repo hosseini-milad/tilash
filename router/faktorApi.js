@@ -906,7 +906,7 @@ const findCartFunction = async (userIdRaw, manageId, pageSize = 10, offset = 0,
 						cartData[c].cartItems[j].productData = productData;
 					} catch {}
 				}
-				userData = await customers.findOne({ _id: cartData[c].userId }).lean();
+                userData = await customers.findOne({ _id: cartData[c].userId }).lean();
 				let official = 1;
 				if (!userData.CustomerID) {
                     official = 0;
@@ -914,12 +914,12 @@ const findCartFunction = async (userIdRaw, manageId, pageSize = 10, offset = 0,
 				if (userData.cName && userData.cName.includes('مصرف')) {
                     official = 0;
                 }
-                userData = await customers.findOne({ _id: cartData[c].userId }).lean();
+				var adminDetail = await userModel.findOne({ _id: cartData[c].manageId }).lean();
                 var bankData = cartData[c].bank&&
                 await bankAccounts.findOne({ BankAccountID: cartData[c].bank})
                 cartData[c].bankName = bankData&&bankData.DlTitle
                 
-				cartData[c] = { ...cartData[c], official ,userData,adminData};
+				cartData[c] = { ...cartData[c], official ,userData,adminData:adminDetail};
                 todayCartData.push({ ...cartData[c], userData });
 				cartDetail.push(findCartSum(cartData[c].cartItems, 
                     cartData[c].payValue,cartData[c].transportPrice,
