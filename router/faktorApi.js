@@ -1793,7 +1793,7 @@ router.post('/update-desc', jsonParser, async (req, res) => {
         var dataQuick={}
         const data = {
             description: req.body.description,
-            pDiscount: req.body.discount,
+            //tDiscount: req.body.discount,
             payValue: req.body.payValue,
             bank:req.body.bank ,
             bankArray:req.body.bankArray ,
@@ -1803,7 +1803,7 @@ router.post('/update-desc', jsonParser, async (req, res) => {
         if (cartNo) {
             await cart.updateOne({ cartNo }, { ...data });
         } else {
-            /*dataQuick = await FindQuick(userId);
+            dataQuick = await FindQuick(userId);
             var cartDiscount = req.body.discount
             if(cartDiscount){
                 var qCartData = dataQuick&&dataQuick.qCartData
@@ -1812,7 +1812,7 @@ router.post('/update-desc', jsonParser, async (req, res) => {
                 await CartDiscountToItems(userId,qCartData&&qCartData.cartItems,
                     cartDiscount,totalPrice,qCartData&&qCartData.pDiscount
                 )
-            }*/
+            }
             await quickCart.updateOne({ userId }, {$set:{ ...data }});
 
             //return res.json({...dataQuick,disPercent})
