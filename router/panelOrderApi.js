@@ -535,7 +535,7 @@ const findCartSum = (cartItems, payValue, addition, discount) => {
             if (cartItems[i].price){
                 var tempPrice = parseInt(cartItemPrice) *countTemp
                 cartSum += tempPrice
-                cartTax += Math.round(tempPrice*TaxRate)
+                cartTax += Math.round(tempPrice*Number(TaxRate))
             }
             if (cartItems[i].count)
                 cartCount += countTemp
@@ -547,7 +547,7 @@ const findCartSum = (cartItems, payValue, addition, discount) => {
                 else
                     cartDiscount += parseInt(cartItemPrice)
                         * Number(cartItems[i].count) *
-                        (1 + TaxRate) * (off) / 100
+                        (1 + Number(TaxRate)) * (off) / 100
             }
         } catch { }
     }
