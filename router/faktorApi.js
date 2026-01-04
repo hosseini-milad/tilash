@@ -1809,9 +1809,10 @@ router.post('/update-desc', jsonParser, async (req, res) => {
                 var qCartData = dataQuick&&dataQuick.qCartData
                 var qCartDetail = dataQuick&&dataQuick.qCartDetail
                 var totalPrice = qCartDetail&&qCartDetail.totalPrice
-                await CartDiscountToItems(userId,qCartData&&qCartData.cartItems,
+                const  result = await CartDiscountToItems(userId,qCartData&&qCartData.cartItems,
                     cartDiscount,totalPrice,qCartData&&qCartData.pDiscount
                 )
+                //return res.json(result)
             }
             await quickCart.updateOne({ userId }, {$set:{ ...data }});
 
@@ -2000,7 +2001,19 @@ router.post('/update-Item',auth, jsonParser, async (req, res) => {
 			if (oldCartItems[i].id == data.cartID) {
 				if (data.changes.description) oldCartItems[i].description = data.changes.description;
 				if (data.changes.count) oldCartItems[i].count = data.changes.count;
-				if (data.changes.discount) oldCartItems[i].discount = data.changes.discount;
+				if (data.changes.discount) {
+                    var discount = data.changes.discount
+                    if(discount>100)
+                        oldCartItems[i].discount = Number(data.changes.discount);
+                    else {
+                        var count = Number(oldCartItems[i].count)
+                        var price = Number(oldCartItems[i].price[0].price)
+                        if(data.changes.count) count = Number(data.changes.count)
+                        if(data.changes.price) price = Number(data.changes.price)
+                        oldCartItems[i].discount = Number(data.changes.discount)*
+                            count * price /100
+                    }
+                }
                 if (data.changes.price){
                     oldCartItems[i].fixPrice = data.changes.price;
                     oldCartItems[i].price.forEach(item => {
