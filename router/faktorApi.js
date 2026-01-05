@@ -1816,7 +1816,7 @@ router.post('/update-desc', jsonParser, async (req, res) => {
             await cart.updateOne({ cartNo }, { ...data });
             
         } else {
-            dataQuick = await FindQuick(userId);
+            dataQuick = await FindQuick(userId,1);
             var cartDiscount = req.body.discount
             if(cartDiscount){
                 var qCartData = dataQuick&&dataQuick.qCartData
