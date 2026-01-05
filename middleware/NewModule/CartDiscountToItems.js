@@ -28,7 +28,7 @@ const CartDiscountToItems=async(userId,oldCartItems, cartDiscount,totalPrice,
 				roundDiscount = remainDiscount - cDiscount
 			}
 			else roundDiscount= 
-				(parseInt(Number(disPercent*price*count)/1000)*1000)
+				(parseInt(Number(disPercent*price*count)/1)*1)
 			
 
 			var newDiscount = oldDiscount + roundDiscount
