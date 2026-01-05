@@ -8,6 +8,7 @@ const CartDiscountToItems=async(userId,oldCartItems, cartDiscount,totalPrice,
 	var preDiscount = 0//pDiscount?Number(pDiscount):0
 	var disCount = Number(cartDiscount)-preDiscount
 	var disPercent= 0
+
 	if(disCount>100){
 		disPercent = disCount/Number(totalPrice)
 	}
@@ -24,10 +25,10 @@ const CartDiscountToItems=async(userId,oldCartItems, cartDiscount,totalPrice,
 			else roundDiscount= (parseInt(Number(disPercent*price*count)/1000)*1000)
 			
 			var newDiscount = oldDiscount + roundDiscount
-			cDiscount += newDiscount
+			cDiscount += roundDiscount
 			oldCartItems[i].discount = newDiscount;
 		}
-		//return(oldCartItems)
+		return(oldCartItems)
 		if(isQuote)
 			await quoteApi.updateOne({ userId: userId }, { $set: { cartItems: oldCartItems } });
 		else
