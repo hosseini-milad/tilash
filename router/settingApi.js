@@ -892,14 +892,14 @@ router.get('/register-waiting-transactions', jsonParser, auth, async (req, res) 
     var result =[]
     for(var i=0;i<wTransaction.length;i++){
         var tData = wTransaction[i]
-        var recieptResult = await sepidarPOST(tData.payQuery, "/api/Receipts/BasedOnInvoice", ObjectID(tData.userId))
+        var recieptResult = await sepidarPOST(tData.query, "/api/Receipts/BasedOnInvoice", ObjectID(tData.userId))
         result.push(recieptResult)
         var ReceiptID = recieptResult&&recieptResult.ReceiptID
         if(!ReceiptID){
             result={
                 error:recieptResult&&recieptResult.Message,
                 message:"ناموفق",
-                query:payQuery,
+                query:"payQuery",
                 InvoiceID:tData.InvoiceID
             }
             res.status(400).json({error:recieptResult&&recieptResult.Message,query:payQuery})
