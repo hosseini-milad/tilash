@@ -344,6 +344,7 @@ router.post('/reg-sanad-sepidar', jsonParser, auth, async (req, res) => {
     result = []
     var success = 0
     var fail = 0
+    var waiting = 0
     var bankList = []
     var bankDetail = []
     const faktorList = await faktor.find({ InvoiceID: { $in: InvoiceIDList } })
@@ -392,6 +393,21 @@ router.post('/reg-sanad-sepidar', jsonParser, auth, async (req, res) => {
                     "Amount": trBank.amount?trBank.amount:faktorData.NetPrice
                 }]
             }
+            if(trBank.isPose){
+                waiting ++
+                await transaction.create({
+                    userId:manageId,
+                    InvoiceID:InvoiceID,
+                    bankCode:trBank.bank,
+                    query:payQuery,
+                    faktorNo:faktorData.faktorNo,
+                    orderNo:faktorData.Number,
+                    payStatus:"waiting",
+                    date:trBank.bankDate,
+                    payValue:trBank.amount}
+                )
+            continue
+            }
             var recieptResult = await sepidarPOST(payQuery, "/api/Receipts/BasedOnInvoice", ObjectID(manageId))
             
             var ReceiptID = recieptResult&&recieptResult.ReceiptID
@@ -434,7 +450,7 @@ router.post('/reg-sanad-sepidar', jsonParser, auth, async (req, res) => {
     }
     
     res.json({message:"سند سفارش ثبت شد",
-        success,fail,bankList,bankDetail,
+        success,fail,waiting,bankList,bankDetail,
         result:result})
 })
 router.post('/reg-sanad-sepidar-old', jsonParser, auth, async (req, res) => {
@@ -771,7 +787,7 @@ router.post('/updateProductExcel',jsonParser,async(req,res)=>{
 
 router.post('/attach-sanad-sepidar', jsonParser, auth, async (req, res) => {
     const InvoiceID = req.body.InvoiceID
-    const {bank,bankDate,amount}= req.body
+    const {bank,bankDate,amount,isPose = 0}= req.body
     if(!bank || !InvoiceID || !amount){
         return res.status(400).json({error:"اطلاعات ناقص است"})
     }
@@ -796,6 +812,29 @@ router.post('/attach-sanad-sepidar', jsonParser, auth, async (req, res) => {
             "Amount": amount?amount:faktorData.NetPrice
         }]
     }
+
+    if(isPose){
+        await transaction.create({
+            userId:manageId,
+            InvoiceID:InvoiceID,
+            bankCode:bank,
+            query:payQuery,
+            faktorNo:faktorData.faktorNo,
+            orderNo:faktorData.Number,
+            payStatus:"waiting",
+            date:bDate,
+            payValue:amount}
+        )
+        var oldBanks = faktorData.bankArray
+        oldBanks.push({bank:bank,amount:amount,bankDate:bDate})
+        await faktor.updateOne({InvoiceID:InvoiceID},
+        {$set:{ReceiptID:ReceiptID,bankArray:oldBanks,
+            ReceiptIDs:oldReciepts,Status:"register"}}) 
+        res.json({message:"سند در انتظار ثبت قرار گرفت",
+        payQuery,
+        result:'result'})
+    }
+
     var recieptResult = await sepidarPOST(payQuery, "/api/Receipts/BasedOnInvoice", ObjectID(manageId))
             
     var ReceiptID = recieptResult&&recieptResult.ReceiptID
@@ -843,6 +882,33 @@ router.post('/attach-sanad-sepidar', jsonParser, auth, async (req, res) => {
         payQuery,
         result:result})
 })
-
+router.get('/list-waiting-transactions', jsonParser, auth, async (req, res) => {
+    const wTransaction = await transaction.find({payStatus:"waiting"})
+    return res.json({data:wTransaction})
+}
+)
+router.get('/register-waiting-transactions', jsonParser, auth, async (req, res) => {
+    const wTransaction = await transaction.find({payStatus:"waiting"})
+    for(var i=0;i<wTransaction.length;i++){
+        var tData = wTransaction[i]
+        var recieptResult = await sepidarPOST(tData.payQuery, "/api/Receipts/BasedOnInvoice", ObjectID(tData.userId))
+            
+        var ReceiptID = recieptResult&&recieptResult.ReceiptID
+        if(!ReceiptID){
+            result={
+                error:recieptResult&&recieptResult.Message,
+                message:"ناموفق",
+                query:payQuery,
+                InvoiceID:tData.InvoiceID
+            }
+            res.status(400).json({error:recieptResult&&recieptResult.Message,query:payQuery})
+            return
+        }
+        await transaction.updateOne({InvoiceID:tData.InvoiceID},{$set:
+            {ReceiptID,payStatus:"done"}})
+    }
+    return res.json({data:wTransaction})
+}
+)
 
 module.exports = router;
