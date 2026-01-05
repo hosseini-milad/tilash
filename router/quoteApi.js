@@ -1776,7 +1776,7 @@ router.post('/update-desc', jsonParser, async (req, res) => {
         var dataQuick={}
         const data = {
             description: req.body.description,
-            pDiscount: req.body.discount,
+            //pDiscount: req.body.discount,
             payValue: req.body.payValue,
             bank:req.body.bank ,
             bankArray:req.body.bankArray ,
