@@ -889,10 +889,11 @@ router.get('/list-waiting-transactions', jsonParser, auth, async (req, res) => {
 )
 router.get('/register-waiting-transactions', jsonParser, auth, async (req, res) => {
     const wTransaction = await transaction.find({payStatus:"waiting"})
+    var result =[]
     for(var i=0;i<wTransaction.length;i++){
         var tData = wTransaction[i]
         var recieptResult = await sepidarPOST(tData.payQuery, "/api/Receipts/BasedOnInvoice", ObjectID(tData.userId))
-            
+        result.push(recieptResult)
         var ReceiptID = recieptResult&&recieptResult.ReceiptID
         if(!ReceiptID){
             result={
@@ -907,7 +908,7 @@ router.get('/register-waiting-transactions', jsonParser, auth, async (req, res) 
         await transaction.updateOne({InvoiceID:tData.InvoiceID},{$set:
             {ReceiptID,payStatus:"done"}})
     }
-    return res.json({data:wTransaction})
+    return res.json({message:"ثبت رسید انجام شد",recieptResult})
 }
 )
 
