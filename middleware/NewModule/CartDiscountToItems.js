@@ -28,7 +28,6 @@ const CartDiscountToItems=async(userId,oldCartItems, cartDiscount,totalPrice,
 			cDiscount += roundDiscount
 			oldCartItems[i].discount = newDiscount;
 		}
-		return(oldCartItems)
 		if(isQuote)
 			await quoteApi.updateOne({ userId: userId }, { $set: { cartItems: oldCartItems } });
 		else

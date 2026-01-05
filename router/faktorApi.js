@@ -1812,7 +1812,7 @@ router.post('/update-desc', jsonParser, async (req, res) => {
                 const  result = await CartDiscountToItems(userId,qCartData&&qCartData.cartItems,
                     cartDiscount,totalPrice,qCartData&&qCartData.pDiscount
                 )
-                return res.json({totalPrice,result})
+                //return res.json({totalPrice,result})
             }
             await quickCart.updateOne({ userId }, {$set:{ ...data }});
 
