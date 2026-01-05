@@ -826,7 +826,7 @@ router.post('/attach-sanad-sepidar', jsonParser, auth, async (req, res) => {
             payValue:amount}
         )
         var oldBanks = faktorData.bankArray
-        oldBanks.push({bank:bank,amount:amount,bankDate:bDate})
+        oldBanks.push({bank:bank,amount:amount,bankDate:bDate,isPose:isPose})
         await faktor.updateOne({InvoiceID:InvoiceID},
         {$set:{ReceiptID:ReceiptID,bankArray:oldBanks,
             ReceiptIDs:oldReciepts,Status:"register"}}) 
@@ -870,7 +870,7 @@ router.post('/attach-sanad-sepidar', jsonParser, auth, async (req, res) => {
     oldReciepts.push(ReceiptID)
     
     var oldBanks = faktorData.bankArray
-    oldBanks.push({bank:bank,amount:amount,bankDate:bDate})
+    oldBanks.push({bank:bank,amount:amount,bankDate:bDate,isPose:isPose})
     await faktor.updateOne({InvoiceID:InvoiceID},
     {$set:{ReceiptID:ReceiptID,bankArray:oldBanks,
         ReceiptIDs:oldReciepts,Status:"register"}}) 
