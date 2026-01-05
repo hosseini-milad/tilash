@@ -908,7 +908,7 @@ router.get('/register-waiting-transactions', jsonParser, auth, async (req, res) 
         await transaction.updateOne({InvoiceID:tData.InvoiceID},{$set:
             {ReceiptID,payStatus:"done"}})
     }
-    return res.json({message:"ثبت رسید انجام شد",recieptResult})
+    return res.json({message:"ثبت رسید انجام شد",result})
 }
 )
 
