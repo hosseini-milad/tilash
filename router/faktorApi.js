@@ -49,6 +49,8 @@ const FindFaktor = require('../middleware/NewModule/FindFaktor');
 const FindQuick = require('../middleware/NewModule/FindQuick');
 const CartDiscountToItems = require('../middleware/NewModule/CartDiscountToItems');
 const FindCurrentExistSale = require('../middleware/CurrentExistSale');
+const FindCart = require('../middleware/NewModule/FindCart');
+const CartDiscountToItemsCart = require('../middleware/NewModule/CartDiscountToItemsCart');
 const { TaxRate } = process.env
 
 const commaSeparatedPrices = (number) => {
@@ -1801,7 +1803,18 @@ router.post('/update-desc', jsonParser, async (req, res) => {
             transportPrice:req.body.transportPrice,
         }
         if (cartNo) {
+            dataQuick = await FindCart(cartNo);
+            var cartDiscount = req.body.discount
+            if(cartDiscount){
+                var qCartData = dataQuick&&dataQuick.qCartData
+                var qCartDetail = dataQuick&&dataQuick.qCartDetail
+                var totalPrice = qCartDetail&&qCartDetail.totalPrice
+                const  result = await CartDiscountToItemsCart(cartNo,qCartData&&qCartData.cartItems,
+                    cartDiscount,totalPrice,qCartData&&qCartData.pDiscount
+                )
+            }
             await cart.updateOne({ cartNo }, { ...data });
+            
         } else {
             dataQuick = await FindQuick(userId);
             var cartDiscount = req.body.discount
@@ -2085,7 +2098,20 @@ router.post('/update-Item-cart', jsonParser, async (req, res) => {
 				if (oldCartItems[i].id == ItemID) {
 					if (changes.description) oldCartItems[i].description = changes.description;
 					if (changes.count) oldCartItems[i].count = changes.count;
-					if (changes.discount) oldCartItems[i].discount = changes.discount;
+					if (changes.discount) {
+                        var discount = changes.discount
+                        if(discount>100)
+                            oldCartItems[i].discount = Number(changes.discount);
+                        else {
+                            var count = Number(oldCartItems[i].count)
+                            var price = Number(oldCartItems[i].price[0].price)
+                            if(changes.count) count = Number(changes.count)
+                            if(changes.price) price = Number(changes.price)
+                            oldCartItems[i].discount = Number(changes.discount)*
+                                count * price /100
+                        }
+                        //oldCartItems[i].discount = changes.discount;
+                    }
 					if (changes.stock) {
 						newStock = changes.stock;
 						oldCartItems[i].stock = changes.stock;

@@ -2068,7 +2068,20 @@ router.post('/update-Item-cart', jsonParser, async (req, res) => {
                 if (oldCartItems[i].id == ItemID) {
                     if (changes.description) oldCartItems[i].description = changes.description;
                     if (changes.count) oldCartItems[i].count = changes.count;
-                    if (changes.discount) oldCartItems[i].discount = changes.discount;
+                    if (changes.discount) {
+                        var discount = changes.discount
+                        if(discount>100)
+                            oldCartItems[i].discount = Number(changes.discount);
+                        else {
+                            var count = Number(oldCartItems[i].count)
+                            var price = Number(oldCartItems[i].price[0].price)
+                            if(changes.count) count = Number(changes.count)
+                            if(changes.price) price = Number(changes.price)
+                            oldCartItems[i].discount = Number(changes.discount)*
+                                count * price /100
+                        }
+                        //oldCartItems[i].discount = changes.discount;
+                    }
                     if (changes.stock) {
                         newStock = changes.stock;
                         oldCartItems[i].stock = changes.stock;
