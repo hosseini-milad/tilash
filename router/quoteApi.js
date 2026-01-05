@@ -1784,6 +1784,16 @@ router.post('/update-desc', jsonParser, async (req, res) => {
             transportPrice:req.body.transportPrice,
         }
         if (cartNo) {
+            dataQuick = await FindCart(cartNo);
+                var cartDiscount = req.body.discount
+                if(cartDiscount){
+                    var qCartData = dataQuick&&dataQuick.qCartData
+                    var qCartDetail = dataQuick&&dataQuick.qCartDetail
+                    var totalPrice = qCartDetail&&qCartDetail.totalFee
+                    const  result = await CartDiscountToItemsCart(cartNo,qCartData&&qCartData.cartItems,
+                        cartDiscount,totalPrice,qCartData&&qCartData.pDiscount
+                    )
+                }
             await cart.updateOne({ cartNo }, { ...data });
         } else {
             dataQuick = await FindQuick(userId,0,1);
@@ -1791,7 +1801,7 @@ router.post('/update-desc', jsonParser, async (req, res) => {
             if(cartDiscount){
                 var qCartData = dataQuick&&dataQuick.qCartData
                 var qCartDetail = dataQuick&&dataQuick.qCartDetail
-                var totalPrice = qCartDetail&&qCartDetail.totalPrice
+                var totalPrice = qCartDetail&&qCartDetail.totalFee
                 await CartDiscountToItems(userId,qCartData&&qCartData.cartItems,
                     cartDiscount,totalPrice,qCartData&&qCartData.pDiscount,1
                 )

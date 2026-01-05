@@ -29,6 +29,7 @@ const CartDiscountToItemsCart=async(cartNo,oldCartItems, cartDiscount,totalPrice
 			cDiscount += roundDiscount
 			oldCartItems[i].discount = newDiscount;
 		}
+		return(oldCartItems)
 		//if(isQuote)
 			await cartModel.updateOne({ cartNo: cartNo }, { $set: { cartItems: oldCartItems } });
 		

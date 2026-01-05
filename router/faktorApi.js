@@ -1808,7 +1808,7 @@ router.post('/update-desc', jsonParser, async (req, res) => {
             if(cartDiscount){
                 var qCartData = dataQuick&&dataQuick.qCartData
                 var qCartDetail = dataQuick&&dataQuick.qCartDetail
-                var totalPrice = qCartDetail&&qCartDetail.totalPrice
+                var totalPrice = qCartDetail&&qCartDetail.totalFee
                 const  result = await CartDiscountToItemsCart(cartNo,qCartData&&qCartData.cartItems,
                     cartDiscount,totalPrice,qCartData&&qCartData.pDiscount
                 )
@@ -1816,16 +1816,16 @@ router.post('/update-desc', jsonParser, async (req, res) => {
             await cart.updateOne({ cartNo }, { ...data });
             
         } else {
-            dataQuick = await FindQuick(userId,1);
+            dataQuick = await FindQuick(userId);
             var cartDiscount = req.body.discount
             if(cartDiscount){
                 var qCartData = dataQuick&&dataQuick.qCartData
                 var qCartDetail = dataQuick&&dataQuick.qCartDetail
-                var totalPrice = qCartDetail&&qCartDetail.totalPrice
+                var totalPrice = qCartDetail&&qCartDetail.totalFee//totalPrice
                 const  result = await CartDiscountToItems(userId,qCartData&&qCartData.cartItems,
                     cartDiscount,totalPrice,qCartData&&qCartData.pDiscount
                 )
-                //return res.json({totalPrice,result})
+                return res.json({totalPrice,result})
             }
             await quickCart.updateOne({ userId }, {$set:{ ...data }});
 
