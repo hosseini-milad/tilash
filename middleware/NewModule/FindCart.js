@@ -3,13 +3,13 @@ const products = require("../../models/product/products");
 const findQCartSum = require("./FindQuickCartSum");
 const findCartItemDetail = require("./FindQuickItem");
 const quoteApi = require('../../models/product/quote');
+const cartModel = require("../../models/product/cart");
 
 const FindCart=async(cartNo,noDiscount,isQuote)=>{
     if(!cartNo) return('')
         try{
         var qCartDetail= {}
-        const qCartData = isQuote?await quoteApi.findOne({cartNo:cartNo}).lean():
-		await qCart.findOne({cartNo:cartNo}).lean()
+        const qCartData = await cartModel.findOne({cartNo:cartNo}).lean()
         if (qCartData) {
 			for (let j = 0; j < qCartData.cartItems.length; j++) {
 				try {	const cartTemp = qCartData.cartItems[j];
