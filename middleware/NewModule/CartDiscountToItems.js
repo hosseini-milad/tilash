@@ -13,9 +13,6 @@ const CartDiscountToItems=async(userId,oldCartItems, cartDiscount,totalPrice,
 		disPercent = disCount/Number(totalPrice)
 	}
 	else disPercent = disCount/100
-	console.log("totalPrice: ",totalPrice)
-	console.log("disCount: ",disCount)
-	console.log("disPercent: ",disPercent)
 		for (var i = 0; i < (oldCartItems && oldCartItems.length); i++) {
 			var price = findPayValuePrice(oldCartItems[i].price, oldCartItems.payValue)
 			console.log("price: ",price)
@@ -37,7 +34,7 @@ const CartDiscountToItems=async(userId,oldCartItems, cartDiscount,totalPrice,
 			console.log("newDiscount: ",newDiscount)
 			oldCartItems[i].discount = newDiscount;
 		}
-		return oldCartItems
+		//return oldCartItems
 		if(isQuote)
 			await quoteApi.updateOne({ userId: userId }, { $set: { cartItems: oldCartItems } });
 		else
