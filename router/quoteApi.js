@@ -48,6 +48,8 @@ const customerModel = require('../models/auth/customers');
 const FindFaktor = require('../middleware/NewModule/FindFaktor');
 const FindQuick = require('../middleware/NewModule/FindQuick');
 const CartDiscountToItems = require('../middleware/NewModule/CartDiscountToItems');
+const CartDiscountToItemsCart = require('../middleware/NewModule/CartDiscountToItemsCart');
+const FindCart = require('../middleware/NewModule/FindCart');
 const { TaxRate } = process.env
 
 const commaSeparatedPrices = (number) => {
