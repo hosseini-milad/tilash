@@ -830,9 +830,10 @@ router.post('/attach-sanad-sepidar', jsonParser, auth, async (req, res) => {
         await faktor.updateOne({InvoiceID:InvoiceID},
         {$set:{ReceiptID:ReceiptID,bankArray:oldBanks,
             ReceiptIDs:oldReciepts,Status:"register"}}) 
-        res.json({message:"سند در انتظار ثبت قرار گرفت",
+        return res.json({message:"سند در انتظار ثبت قرار گرفت",
         payQuery,
         result:'result'})
+        
     }
 
     var recieptResult = await sepidarPOST(payQuery, "/api/Receipts/BasedOnInvoice", ObjectID(manageId))
