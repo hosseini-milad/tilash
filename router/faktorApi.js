@@ -503,7 +503,7 @@ router.post('/calc-count', auth, async (req, res) => {
                 isQuote: false,
                 isSale,
                 stockId,
-                $and: [{ InvoiceID: { $exists: false } }, { taskStep: 'cancel' }],
+                $and: [{ InvoiceID: { $exists: false } }, { taskStep: {$nin:['cancel']} }],
             };
             currentCart = await cartModel.find(cartsCondition).lean();
             qCartList = await quickCartModel.find({ 'cartItems.sku': sku, stockId }).lean();
