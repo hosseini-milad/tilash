@@ -105,7 +105,7 @@ router.post('/find-products', auth, async (req, res) => {
                 isQuote: false,
                 isSale,
                 stockId,
-                $or: [{ InvoiceID: { $exists: false } }, { taskStep: {$nin:['cancel']} }],
+                $and: [{ InvoiceID: { $exists: false } }, { taskStep: {$nin:['cancel']} }],
             };
             currentCart = await cartModel.find(cartsCondition).lean();
             qCartList = await quickCartModel.find({ 'cartItems.sku': { $in: searchedProducts }, stockId }).lean();
