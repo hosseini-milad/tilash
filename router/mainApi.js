@@ -95,6 +95,8 @@ schedule.scheduleJob('*/10 * * * *', async () => {
 schedule.scheduleJob('00 00 12 * * 0-6', async () => {
     response = await fetch(ONLINE_URL + "/delete-quick",
         { method: 'GET' });
+    response = await fetch(ONLINE_URL + "/setting/register-waiting-transactions",
+        { method: 'GET' });
 })
 router.get('/delete-quick', async (req, res) => {
     try {

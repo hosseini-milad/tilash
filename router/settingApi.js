@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const jsonParser = bodyParser.json();
 const router = express.Router()
+const { default: fetch } = require("node-fetch");
 const auth = require("../middleware/auth");
 const xlsx = require('node-xlsx');
 const task = require('../models/main/task');
@@ -31,6 +32,7 @@ const bankAccounts = require('../models/product/bankAccounts');
 const utils = require('../utils');
 const customerModel = require('../models/auth/customers');
 const userModel = require('../models/auth/users');
+const { ONLINE_URL } = process.env;
 const CalcFaktorRemain = require('../middleware/NewModule/CalcFaktorRemain');
 //const UpdateExcel = require('../middleware/UpdateExcel');
 
@@ -241,7 +243,8 @@ router.post('/multi-sepidar', jsonParser, auth, async (req, res) => {
         }
         catch{continue}
         }
-        
+        await fetch(ONLINE_URL + "/sepidar-quantity",
+                { method: 'POST' });
         res.json({ data: "sepidarResult",query,result,
             message: error?'':"سفارشات در سپیدار ثبت شد" })
     }
@@ -888,7 +891,7 @@ router.get('/list-waiting-transactions', jsonParser, auth, async (req, res) => {
     return res.json({data:wTransaction})
 }
 )
-router.get('/register-waiting-transactions', jsonParser, auth, async (req, res) => {
+router.get('/register-waiting-transactions', jsonParser, async (req, res) => {
     const wTransaction = await transaction.find({payStatus:"waiting"})
     var result =[]
     for(var i=0;i<wTransaction.length;i++){
