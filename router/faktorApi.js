@@ -1854,7 +1854,7 @@ router.post('/update-desc', jsonParser, async (req, res) => {
 })
 router.post('/delete-discount', jsonParser,auth, async (req, res) => {
     try {
-        const userId = req.body.userId ? req.body.userId : req.headers['userid'];
+        var userId = req.body.userId ? req.body.userId : req.headers['userid'];
         const cartNo = req.body.cartNo
         const cartData = cartNo?await cart.findOne({cartNo:cartNo}).lean():
             await quickCart.findOne({userId:userId}).lean()
@@ -1862,6 +1862,7 @@ router.post('/delete-discount', jsonParser,auth, async (req, res) => {
             return res.status(400).json({error:"سفارش پیدا نشد"})
 
         }
+        if(cartNo) userId = cartData.userId
         var newCartItems = cartData.cartItems
         for(var i=0;i<newCartItems.length;i++){
             newCartItems[i].discount = 0
@@ -1872,7 +1873,8 @@ router.post('/delete-discount', jsonParser,auth, async (req, res) => {
         await quickCart.updateOne({userId:userId},{$set:{
             cartItems:newCartItems
         }})
-        return res.json({message:"تخفیف حذف شد",data:result})
+        const cartDetails = await findCartFunction(userId, req.headers['userid']); // TODO
+        return res.json({message:"تخفیف حذف شد",...cartDetails})
     }
     catch(error){
         return res.status(400).json({error:"خطای ثبت",data:error})
