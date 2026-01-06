@@ -17,7 +17,7 @@ const CartDiscountToItems=async(userId,oldCartItems, cartDiscount,totalPrice,
 			var price = findPayValuePrice(oldCartItems[i].price, oldCartItems.payValue)
 			console.log("price: ",price)
 			var count = Number(oldCartItems[i].count)
-			var oldDiscount = Number(oldCartItems[i].discount )
+			var oldDiscount = oldCartItems[i].discount?Number(oldCartItems[i].discount ):0
 			var roundDiscount = 0
 			if(i == oldCartItems.length-1){
 				var remainDiscount = Number(totalPrice) *disPercent
