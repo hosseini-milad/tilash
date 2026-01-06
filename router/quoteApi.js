@@ -1861,6 +1861,32 @@ router.post('/edit-cart', jsonParser, async (req, res) => {
         return res.status(500).json({ message: error.message });
     }
 });
+router.post('/delete-discount', jsonParser,auth, async (req, res) => {
+    try {
+        const userId = req.body.userId ? req.body.userId : req.headers['userid'];
+        const cartNo = req.body.cartNo
+        const cartData = cartNo?await cart.findOne({cartNo:cartNo}).lean():
+            await quickCart.findOne({userId:userId}).lean()
+        if(!cartData){
+            return res.status(400).json({error:"سفارش پیدا نشد"})
+
+        }
+        var newCartItems = cartData.cartItems
+        for(var i=0;i<newCartItems.length;i++){
+            newCartItems[i].discount = 0
+        }
+        const result = cartNo?await cart.updateOne({cartNo:cartNo},{$set:{
+            cartItems:newCartItems
+        }}):
+        await quickCart.updateOne({userId:userId},{$set:{
+            cartItems:newCartItems
+        }})
+        return res.json({message:"تخفیف حذف شد",data:result})
+    }
+    catch(error){
+        return res.status(400).json({error:"خطای ثبت",data:error})
+    }
+})
 
 router.post('/edit-quote', jsonParser, async (req, res) => {
     try {

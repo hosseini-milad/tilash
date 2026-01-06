@@ -1853,7 +1853,7 @@ router.post('/update-desc', jsonParser, async (req, res) => {
     }
 })
 router.post('/delete-discount', jsonParser,auth, async (req, res) => {
-    
+    try {
         const userId = req.body.userId ? req.body.userId : req.headers['userid'];
         const cartNo = req.body.cartNo
         const cartData = cartNo?await cart.findOne({cartNo:cartNo}).lean():
@@ -1873,7 +1873,7 @@ router.post('/delete-discount', jsonParser,auth, async (req, res) => {
             cartItems:newCartItems
         }})
         return res.json({message:"تخفیف حذف شد",data:result})
-    try {}
+    }
     catch(error){
         return res.status(400).json({error:"خطای ثبت",data:error})
     }
