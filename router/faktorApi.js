@@ -1857,12 +1857,11 @@ router.post('/delete-discount', jsonParser,auth, async (req, res) => {
         const userId = req.body.userId ? req.body.userId : req.headers['userid'];
         const cartNo = req.body.cartNo
         const cartData = cartNo?await cart.findOne({cartNo:cartNo}).lean():
-            quickCart.findOne({userId:userId}).lean()
+            await quickCart.findOne({userId:userId}).lean()
         if(!cartData){
             return res.status(400).json({error:"سفارش پیدا نشد"})
 
         }
-        return res.json({data:cartData})
         var newCartItems = cartData.cartItems
         for(var i=0;i<newCartItems.length;i++){
             newCartItems[i].discount = 0
