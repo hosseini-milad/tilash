@@ -124,16 +124,6 @@ router.post('/find-products', auth, async (req, res) => {
 		let index = 0;
 		for (let i = 0; i < searchProducts.length; i++) {
             let countArr = []
-            for(var j=0;j<(stockArr&&stockArr.length);j++){
-                //const stockInfo = await stockModel.findOne({StockID:stockArr[j].StockID})
-                var tempCount = searchProducts[i].countData.find((item) => item.Stock == stockArr[j].StockID)
-                countArr.push({
-                    count:tempCount&&tempCount.quantity,
-                    title:stockArr[j].Title,
-                    id:stockArr[j].StockID,
-                    isMain:(stockId == stockArr[j].StockID)?true:false
-                })
-            }
 			let count = searchProducts[i].countData.find((item) => item.Stock == stockId);
 			let desc = '';
 			let cartCount = findCartCount(searchProducts[i].sku, currentCart.concat(qCartList), stockId);
@@ -144,6 +134,18 @@ router.post('/find-products', auth, async (req, res) => {
                 //continue; 
             }
             count.quantity = parseInt(count.quantity) - parseInt(cartCount);
+            
+            for(var j=0;j<(stockArr&&stockArr.length);j++){
+                //const stockInfo = await stockModel.findOne({StockID:stockArr[j].StockID})
+                var tempCount = searchProducts[i].countData.find((item) => item.Stock == stockArr[j].StockID)
+                if(stockId == stockArr[j].StockID)    tempCount = count.quantity
+                countArr.push({
+                    count:tempCount&&tempCount.quantity,
+                    title:stockArr[j].Title,
+                    id:stockArr[j].StockID,
+                    isMain:(stockId == stockArr[j].StockID)?true:false
+                })
+            }
 			if (1||count.quantity > 0) {
 				index++;
 				desc = searchProducts[i].title + '(' + searchProducts[i].sku + ')' + '___' + count.quantity;
