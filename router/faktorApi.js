@@ -1862,7 +1862,7 @@ router.post('/delete-discount', jsonParser,auth, async (req, res) => {
             return res.status(400).json({error:"سفارش پیدا نشد"})
 
         }
-        return res.json(cartData)
+        return res.json({data:cartData})
         var newCartItems = cartData.cartItems
         for(var i=0;i<newCartItems.length;i++){
             newCartItems[i].discount = 0
