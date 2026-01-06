@@ -1874,8 +1874,8 @@ router.post('/delete-discount', jsonParser,auth, async (req, res) => {
         }})
         return res.json({message:"تخفیف حذف شد",data:result})
     }
-    catch{
-        return res.status(400).json({error:"خطای ثبت"})
+    catch(error){
+        return res.status(400).json({error:"خطای ثبت",data:error})
     }
 })
 router.post('/edit-cart', jsonParser, async (req, res) => {
