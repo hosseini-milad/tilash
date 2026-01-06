@@ -11,7 +11,7 @@ const QCartSchema = new Schema({
     payValue:{ type: String },
     stockId:{type:String},
     description:{type:String},
-    discount:{type:String},
+    discount:{type:String , default:"0"},
     pDiscount:{type:String},
     
     bank:{type:String},
