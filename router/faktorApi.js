@@ -1852,7 +1852,27 @@ router.post('/update-desc', jsonParser, async (req, res) => {
         return res.status(500).json({ message: error.message })
     }
 })
+router.post('/delete-discount', jsonParser,auth, async (req, res) => {
+    try {
+        const cartNo = req.body.cartNo
+        const cartData = await cart.findOne({cartNo:cartNo}).lean()
+        if(!cartData){
+            return res.status(400).json({error:"سفارش پیدا نشد"})
 
+        }
+        var newCartItems = cartData.cartItems
+        for(var i=0;i<newCartItems.length;i++){
+            newCartItems[i].discount = 0
+        }
+        const result = await cart.updateOne({cartNo:cartNo},{$set:{
+            cartItems:newCartItems
+        }})
+        return res.json({message:"تخفیف حذف شد",data:result})
+    }
+    catch{
+        return res.status(400).json({error:"خطای ثبت"})
+    }
+})
 router.post('/edit-cart', jsonParser, async (req, res) => {
 	try {
 		const userId = req.body.userId ? req.body.userId : req.headers['userid'];
