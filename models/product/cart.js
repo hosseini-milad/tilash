@@ -16,6 +16,7 @@ const CartSchema = new Schema({
     status:{type:String},
     description:{type:String},
     discount:{type:String},
+    originDiscount:{type:String},
     pDiscount:{type:String},
     pPrice:{type:String},
     totalPrice:{ type: String },

@@ -2042,6 +2042,7 @@ router.post('/update-Item',auth, jsonParser, async (req, res) => {
 				if (data.changes.description) oldCartItems[i].description = data.changes.description;
 				if (data.changes.count) oldCartItems[i].count = data.changes.count;
 				if (data.changes.discount) {
+                    oldCartItems[i].originDiscount = data.changes.discount
                     var discount = data.changes.discount
                     if(discount>100)
                         oldCartItems[i].discount = Number(data.changes.discount);

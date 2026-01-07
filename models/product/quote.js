@@ -13,6 +13,7 @@ const QuoteSchema = new Schema({
     stockId:{type:String},
     description:{type:String},
     discount:{type:String,default:"0"},
+    originDiscount:{type:String},
     pDiscount:{type:String},
     
     bank:{type:String},
