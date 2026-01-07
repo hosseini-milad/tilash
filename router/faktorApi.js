@@ -2728,9 +2728,10 @@ const checkCart = async (cartItems, stockId, payValue) => {
 		if (count < 0) {
 			checkCart += `sku: ${sku}, value: ${count} || `;
 		}
+        var countData = cartItems[i].count
         var priceData = cartItems[i].price
         var Price = priceData&&priceData[0]&&priceData[0].price
-        if(cartItems[i].discount>Number(Price)){
+        if(cartItems[i].discount>Number(Price)*countData){
             checkCart += `sku: ${sku}, price: ${Price}, discount:  ${cartItems[i].discount}|| `;
         }
 	}
