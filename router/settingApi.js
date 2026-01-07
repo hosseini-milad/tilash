@@ -378,10 +378,13 @@ router.post('/reg-sanad-sepidar', jsonParser, auth, async (req, res) => {
                 amount:faktorData.NetPrice
             })
         }
+        var ReceiptIDs = []
+        var regAccept = 0
         for(var c=0;c<bankArray.length;c++){
+            
             var trBank = bankArray[c]
             bDate = trBank.bankDate?trBank.bankDate:now.toLocaleDateString('en')
-            var ReceiptIDs = []
+            
             var payQuery={
                 "GUID": "124ab075-fc79-417f-b8cf-2a"+
                     (Math.floor(Math.random()*9000000000) + 1000000000),
@@ -398,6 +401,7 @@ router.post('/reg-sanad-sepidar', jsonParser, auth, async (req, res) => {
             }
             if(trBank.isPose){
                 waiting ++
+                regAccept =1
                 await transaction.create({
                     userId:manageId,
                     InvoiceID:InvoiceID,
@@ -426,6 +430,7 @@ router.post('/reg-sanad-sepidar', jsonParser, auth, async (req, res) => {
                 //res.status(400).json({error:recieptResult&&recieptResult.Message,query:recieptQuery})
                 //return
             }
+            regAccept =1
             success++
             await transaction.create({
                 userId:manageId,
@@ -445,10 +450,10 @@ router.post('/reg-sanad-sepidar', jsonParser, auth, async (req, res) => {
                 query:payQuery,
                 InvoiceID:InvoiceID
             })
-            ReceiptIDs.push(ReceiptID)
-            await faktor.updateOne({InvoiceID:InvoiceID},
-            {$set:{ReceiptID:ReceiptID,ReceiptIDs,Status:"register"}}) 
+            ReceiptIDs.push(ReceiptID) 
         }
+        regAccept && await faktor.updateOne({InvoiceID:InvoiceID},
+            {$set:{ReceiptID:ReceiptID,ReceiptIDs,Status:"register"}})
         
     }
     
