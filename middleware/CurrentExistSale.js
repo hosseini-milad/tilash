@@ -25,7 +25,7 @@ const FindCurrentExistSale=async(itemId,cartNo,stockNo,userId)=>{
         //validOrder.push(validOrder)
     }
     for(var i=0;i<currentQuick.length;i++){
-        if(currentQuick[i].userId == userId) continue
+        //if(currentQuick[i].userId == userId) continue
         var cartItems = currentQuick[i].cartItems
         if(!cartItems) continue
         for(var j=0;j<cartItems.length;j++){
