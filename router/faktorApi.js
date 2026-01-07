@@ -2728,8 +2728,10 @@ const checkCart = async (cartItems, stockId, payValue) => {
 		if (count < 0) {
 			checkCart += `sku: ${sku}, value: ${count} || `;
 		}
-        if(cartItems[i].discount>cartItems[i].price){
-            checkCart += `sku: ${sku}, price: ${cartItems[i].price}, discount:  ${cartItems[i].discount}|| `;
+        var priceData = cartItems[i].price
+        var Price = priceData&&priceData[0]&&priceData[0].price
+        if(cartItems[i].discount>Number(Price)){
+            checkCart += `sku: ${sku}, price: ${Price}, discount:  ${cartItems[i].discount}|| `;
         }
 	}
 	return checkCart;
