@@ -1710,7 +1710,7 @@ router.post('/update-cart', jsonParser, async (req, res) => {
 		let status = '';
 		//const cartData = await cart.find({userId:userId})
 		const qCartData = await quickCart.findOne({ userId }).lean();
-		const availItems = await checkAvailable(req.body.cartItem, stockId);
+		const availItems = await checkAvailable(req.body.cartItem, stockId,'',userId);
 		if (!availItems) {
 			return res.status(400).json({ error: 'موجودی کافی نیست' });
 		}
@@ -1929,7 +1929,7 @@ router.post('/edit-quote', jsonParser, async (req, res) => {
 	}
 });
 
-const checkAvailable = async (item, stockId = '13', cartNo) => {
+const checkAvailable = async (item, stockId = '13', cartNo,userId) => {
 	const existItem = await productcounts.findOne({ ItemID: item.id, Stock: stockId }).lean();
 	// const existItem3 = await productcounts.findOne({ ItemID: item.id, Stock: '9' }).lean();
 
@@ -1941,7 +1941,7 @@ const checkAvailable = async (item, stockId = '13', cartNo) => {
 	let totalCount = existItem ? parseFloat(existItem.quantity) : 0;
 	// totalCount += existItem3 ? parseFloat(existItem3.quantity) : 0;
 
-	const currentOrder = await FindCurrentExistSale(item.id, cartNo, stockId);
+	const currentOrder = await FindCurrentExistSale(item.id, cartNo, stockId,userId);
 	let minusCount = currentOrder + item.count;
 	return compareCount(totalCount, minusCount);
 };
@@ -2061,7 +2061,7 @@ router.post('/update-Item',auth, jsonParser, async (req, res) => {
                         });
                 } 
 
-				const availItems = await checkAvailable(oldCartItems[i], manageDetail&&manageDetail.StockId);
+				const availItems = await checkAvailable(oldCartItems[i], manageDetail&&manageDetail.StockId,'',data.userId);
 
 				if (!availItems) {
 					res.status(400).json({ error: 'موجودی کافی نیست' });
